@@ -7,22 +7,21 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     Title="Music Recognizer"
     Width="350"
-    Height="40"
+    Height="82"
     AllowsTransparency="True"
-    Background="{x:Null}"
+    Background="Transparent"
     Closing="Window_Closing"
     MouseDown="Window_MouseDown"
+    ResizeMode="NoResize"
     ShowInTaskbar="False"
-    Topmost="True"
+    WindowStartupLocation="CenterScreen"
     WindowStyle="None"
     mc:Ignorable="d">
-    <Border>
-        <Border.Clip>
-            <RectangleGeometry
-                RadiusX="5"
-                RadiusY="5"
-                Rect="0,0,350,40" />
-        </Border.Clip>
+    <Border
+        x:Name="MainBorder"
+        BorderBrush="#424242"
+        BorderThickness="1"
+        CornerRadius="5">
         <local:Recognizer x:Name="Recognizer" />
     </Border>
 </Window>

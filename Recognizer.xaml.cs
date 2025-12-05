@@ -38,6 +38,9 @@ namespace Music
         {
             InitializeComponent();
 
+            stackpa.Margin = new Thickness(10, 0, 10, 0);
+            Visualizer.Margin = new Thickness(10, 0, 10, 0);
+
             while (true)
             {
                 await Task.Delay(100);
@@ -58,8 +61,8 @@ namespace Music
             canvas.Clip = new RectangleGeometry
             {
                 Rect = new Rect(0, 0, canvas.ActualWidth, canvas.ActualHeight),
-                RadiusX = 10,
-                RadiusY = 10
+                RadiusX = 5,
+                RadiusY = 5
             };
 
             Dispatcher.InvokeAsync(() =>
@@ -184,7 +187,7 @@ namespace Music
                             if (DateTime.Now - lastrecognized > TimeSpan.FromSeconds(10))
                             {
                                 streak = 2;
-                                await Dispatcher.InvokeAsync(() => Visibility = Visibility.Collapsed);
+                                //await Dispatcher.InvokeAsync(() => Visibility = Visibility.Collapsed);
                             }
                             break;
                         }
@@ -257,8 +260,8 @@ namespace Music
                 MusicImgBackground.Source = null;
                 MusicImageGlow.Background = null;
 
-                stackpa.Margin = new Thickness(10, 0, 0, 0);
-                stackpa.Margin = new Thickness(10, 0, 0, 0);
+                stackpa.Margin = new Thickness(10, 0, 10, 0);
+                Visualizer.Margin = new Thickness(10, 0, 10, 0);
                 return;
             }
 
@@ -270,8 +273,8 @@ namespace Music
             MusicImgBackground.Source = bitmap;
             MusicImageGlow.Background = brush;
 
-            stackpa.Margin = new Thickness(55, 0, 0, 0);
-            stackpa.Margin = new Thickness(55, 0, 0, 0);
+            stackpa.Margin = new Thickness(50, 0, 10, 0);
+            Visualizer.Margin = new Thickness(50, 0, 10, 0);
         }
     }
 
