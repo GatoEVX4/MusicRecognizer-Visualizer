@@ -17,8 +17,7 @@ A real-time desktop music recognition application built with WPF and C#. This ap
 ## Showcase
 
 Watch the application in action:
-
-**[📹 Video Demo](https://streamable.com/6zhf9a)**
+**https://streamable.com/6zhf9a**
 
 ## Technology Stack
 
