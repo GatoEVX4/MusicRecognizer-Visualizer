@@ -11,7 +11,6 @@
     <Border
         x:Name="Background"
         Background="{x:Null}"
-        ClipToBounds="True"
         CornerRadius="5"
         SizeChanged="Canvas_SizeChanged">
         <Grid>

@@ -121,8 +121,10 @@ namespace Music
             double value = 0;
             for (int h = Math.Max(i - HorizontalSmoothness, 0); h < Math.Min(i + HorizontalSmoothness, BarCount); h++)
                 value += VSmooth(h, s);
-            return value / ((HorizontalSmoothness + 1) * 2);
+            return value / ((HorizontalSmoothness + 1) * 1.8);
         }
+
+        private int mutiplier = 1;
         private void DrawVisualizer()
         {
             double canvasHeight = SpectrumStack.ActualHeight;
@@ -131,7 +133,7 @@ namespace Music
             for (int i = 0; i < BarCount; i++)
             {
                 var rect = _bars[i];
-                rect.Height = canvasHeight * (0.2 + BothSmooth(i)) * 0.3;
+                rect.Height = canvasHeight * (0.1 + BothSmooth(i) * mutiplier);
                 rect.Width = Math.Max(barWidth - 5, 0);
             }
         }

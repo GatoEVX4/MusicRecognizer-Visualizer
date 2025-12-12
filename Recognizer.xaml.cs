@@ -39,7 +39,7 @@ namespace Music
         private byte[] lastsigsent = [];
         private List<LandmarkInfo> referenceLandmarks = [];
         private ShazamResult? lastresult;
-        private int streak = 2;
+        private int streak = 1;
         private int siglenght = 0;
 
         public Recognizer()
@@ -61,7 +61,7 @@ namespace Music
                 try
                 {
                     await Shazam(new CancellationToken());
-                    var delay = Clamp(streak * 2000, 4000, 8000);
+                    var delay = Clamp(streak * 2000, 2000, 5000);
                     Logger.Log($"Shazam Request Delay: {delay}", ConsoleColor.DarkCyan);
                     await Task.Delay(delay);
                 }
@@ -146,7 +146,7 @@ namespace Music
             };
             var sampleProvider = resampler.ToSampleProvider();
 
-            int retryMs = Clamp(streak * 2000, 3000, 8000);
+            int retryMs = Clamp(streak * 2000, 3000, 7000);
             Logger.Log($"Listening to {retryMs}ms of desktop audio...", ConsoleColor.Magenta);
 
             try
@@ -171,6 +171,7 @@ namespace Music
                         if (siglenght == signature.Length)
                         {
                             Logger.Log("nothing playing", ConsoleColor.DarkRed);
+                            streak = 1;
                             await Dispatcher.InvokeAsync(() =>
                             {
                                 Visibility = Visibility.Collapsed;
@@ -180,6 +181,11 @@ namespace Music
                         siglenght = signature.Length;
                         continue;
                     }
+
+                    await Dispatcher.InvokeAsync(() =>
+                    {
+                        Visibility = Visibility.Visible;
+                    });
 
                     if (signature == lastsigsent)
                     {
@@ -200,7 +206,7 @@ namespace Music
                         {
                             if (DateTime.Now - lastrecognized > TimeSpan.FromSeconds(10))
                             {
-                                streak = 2;
+                                streak = 11;
                                 //await Dispatcher.InvokeAsync(() => Visibility = Visibility.Collapsed);
                             }
                             break;
@@ -211,7 +217,7 @@ namespace Music
                     if (lastresult?.Title == result.Title)
                         streak++;
                     else
-                        streak = 2;
+                        streak = 1;
 
                     lastrecognized = DateTime.Now;
                     lastresult = result;
