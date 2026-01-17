@@ -2,6 +2,8 @@
 
 A real-time desktop music recognition application built with WPF and C#. This application continuously monitors your desktop audio output, identifies songs using audio fingerprinting technology, and displays detailed information about the currently playing track.
 
+<img width="1439" height="59" alt="image" src="https://github.com/user-attachments/assets/126ccb6c-799b-48c5-a608-5ec57c9700de" />
+
 ## Features
 
 - **Real-time Music Recognition**: Automatically identifies songs playing on your desktop using advanced audio fingerprinting
