@@ -55,18 +55,6 @@ https://streamable.com/6zhf9a
 - Attempts recognition periodically
 - Updates the UI when a track is identified
 
-## Installation
-
-1. Download the latest release
-2. Extract the files
-3. Run `Music.exe`
-
-## Usage
-
-1. Start the application
-2. Play music from any desktop source
-3. Track information appears automatically
-
 ### Controls
 
 - Press `L` to toggle between taskbar and window modes
@@ -94,10 +82,7 @@ https://streamable.com/6zhf9a
 
 ## Limitations
 
-- Requires internet access
-- Recognition depends on Shazam’s database
-- Low-quality audio reduces accuracy
-
+- Recognition relies on Shazam’s database
 ## Disclaimer
 
 This project is for personal and educational use.
