@@ -64,7 +64,7 @@ namespace Music
                     Width = ActualWidth / BarCount,
                     RadiusX = 2,
                     RadiusY = 2,
-                    VerticalAlignment = VerticalAlignment.Center,
+                    VerticalAlignment = VerticalAlignment.Bottom,
                     Fill = brush
                 };
                 SpectrumStack.Children.Add(rect);

@@ -176,6 +176,7 @@ namespace Music
                             {
                                 MusicImgBackground.Visibility = Visibility.Collapsed;
                                 InfoBar.Visibility = Visibility.Collapsed;
+                                Visualizer.Margin = new Thickness(10, 0, 10, 0);
                             });
                             break;
                         }
@@ -207,6 +208,7 @@ namespace Music
                                 {
                                     MusicImgBackground.Visibility = Visibility.Collapsed;
                                     InfoBar.Visibility = Visibility.Collapsed;
+                                    Visualizer.Margin = new Thickness(10, 0, 10, 0);
                                 });
                             }
                             break;
