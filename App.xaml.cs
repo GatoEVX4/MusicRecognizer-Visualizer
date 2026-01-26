@@ -9,6 +9,19 @@ namespace Music
     /// </summary>
     public partial class App : Application
     {
+        public static DiscordPresence? DiscordPresence { get; private set; }
+
+        protected override void OnStartup(StartupEventArgs e)
+        {
+            base.OnStartup(e);
+            DiscordPresence = new DiscordPresence();
+        }
+
+        protected override void OnExit(ExitEventArgs e)
+        {
+            DiscordPresence?.Dispose();
+            base.OnExit(e);
+        }
     }
 
 }

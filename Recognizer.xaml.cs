@@ -1,11 +1,9 @@
 ﻿using Force.Crc32;
 using MathNet.Numerics;
 using MathNet.Numerics.IntegralTransforms;
-using Microsoft.VisualBasic.Logging;
 using NAudio.CoreAudioApi;
 using NAudio.Wave;
 using System.IO;
-using System.Net;
 using System.Net.Http;
 using System.Numerics;
 using System.Security.Authentication;
@@ -17,8 +15,6 @@ using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using static Music.API;
-using static System.Net.WebRequestMethods;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.TrayNotify;
 
 namespace Music
 {
@@ -172,6 +168,7 @@ namespace Music
                         {
                             Logger.Log("nothing playing", ConsoleColor.DarkRed);
                             streak = 1;
+                            App.DiscordPresence?.UpdateMusic(null);
                             await Dispatcher.InvokeAsync(() =>
                             {
                                 MusicImgBackground.Visibility = Visibility.Collapsed;
@@ -204,6 +201,7 @@ namespace Music
                             if (DateTime.Now - lastrecognized > TimeSpan.FromSeconds(10))
                             {
                                 streak = 11;
+                                App.DiscordPresence?.UpdateMusic(null);
                                 await Dispatcher.InvokeAsync(() =>
                                 {
                                     MusicImgBackground.Visibility = Visibility.Collapsed;
@@ -223,6 +221,8 @@ namespace Music
 
                     lastrecognized = DateTime.Now;
                     lastresult = result;
+
+                    App.DiscordPresence?.UpdateMusic(result);
 
                     await Dispatcher.InvokeAsync(() =>
                     {
@@ -320,21 +320,15 @@ namespace Music
         }
     }
 
-    internal class API
+    public class API
     {
         public static class ShazamApi
         {
             private static readonly HttpClient Http;
             static ShazamApi()
             {
-                //var proxy = new WebProxy("http://104.143.226.122:5725")
-                //{
-                //    BypassProxyOnLocal = false
-                //};
-
                 Http = new HttpClient(new HttpClientHandler
                 {
-                    //Proxy = proxy,
                     UseProxy = false,
                     ServerCertificateCustomValidationCallback = (_, _, _, _) => true,
                     SslProtocols = SslProtocols.None
@@ -379,6 +373,7 @@ namespace Music
                         var result = new ShazamResult
                         {
                             Success = true,
+                            Id = data.Track.Key,
                             Title = data.Track.Title,
                             Artist = data.Track.Subtitle,
                             Genre = data.Track.Genres?.Primary,
@@ -386,10 +381,11 @@ namespace Music
                             Isrc = data.Track.Isrc,
                             CoverArtUrl = data.Track.Images?.CoverArt,
                             JoeColor = ParseJoeColor(data.Track.Images?.JoeColor),
-                            Offset = offset,
+                            Offset = offset + 6,
                             RetryMs = data.RetryMs
                         };
 
+                        result.DurationSeconds = await GetTrackDurationAsync(result.Isrc, result.Title, result.Artist);
                         return (result, jsonString);
                     }
 
@@ -408,6 +404,126 @@ namespace Music
                         ErrorMessage = ex.Message
                     }, "error");
                 }
+            }
+
+            private static async Task<int?> GetTrackDurationAsync(string isrc, string title, string artist)
+            {
+                if (string.IsNullOrEmpty(isrc) && (string.IsNullOrEmpty(title) || string.IsNullOrEmpty(artist)))
+                    return null;
+
+                try
+                {
+                    if (!string.IsNullOrEmpty(isrc))
+                    {
+                        var duration = await GetDurationFromMusicBrainzByIsrc(isrc);
+                        if (duration.HasValue)
+                            return duration.Value;
+                    }
+
+                    if (!string.IsNullOrEmpty(title) && !string.IsNullOrEmpty(artist))
+                    {
+                        var duration = await GetDurationFromMusicBrainzByTitle(title, artist);
+                        if (duration.HasValue)
+                            return duration.Value;
+
+                        duration = await GetDurationFromLastFM(title, artist);
+                        if (duration.HasValue)
+                            return duration.Value;
+                    }
+                }
+                catch
+                {
+                    
+                }
+
+                return null;
+            }
+
+            private static async Task<int?> GetDurationFromMusicBrainzByIsrc(string isrc)
+            {
+                try
+                {
+                    var url = $"https://musicbrainz.org/ws/2/recording/?query=isrc:{Uri.EscapeDataString(isrc)}&fmt=json&limit=1";
+                    using var client = new HttpClient();
+                    client.Timeout = TimeSpan.FromSeconds(6);
+                    client.DefaultRequestHeaders.Add("User-Agent", "MusicRecognizer/1.0 (https://github.com/GatoEVX4/MusicRecognizer-Visualizer)");
+                    var response = await client.GetStringAsync(url);
+                    var json = JsonSerializer.Deserialize<JsonElement>(response);
+                    
+                    if (json.TryGetProperty("recordings", out var recordings) && recordings.GetArrayLength() > 0)
+                    {
+                        var recording = recordings[0];
+                        if (recording.TryGetProperty("length", out var lengthElement))
+                        {
+                            var lengthMs = lengthElement.GetInt32();
+                            if (lengthMs > 0)
+                                return lengthMs / 1000;
+                        }
+                    }
+                }
+                catch
+                {
+                    
+                }
+                return null;
+            }
+
+            private static async Task<int?> GetDurationFromMusicBrainzByTitle(string title, string artist)
+            {
+                try
+                {
+                    var query = $"recording:\"{Uri.EscapeDataString(title)}\" AND artist:\"{Uri.EscapeDataString(artist)}\"";
+                    var url = $"https://musicbrainz.org/ws/2/recording/?query={query}&fmt=json&limit=1";
+                    using var client = new HttpClient();
+                    client.Timeout = TimeSpan.FromSeconds(6);
+                    client.DefaultRequestHeaders.Add("User-Agent", "MusicRecognizer/1.0 (https://github.com/GatoEVX4/MusicRecognizer-Visualizer)");
+                    
+                    var response = await client.GetStringAsync(url);
+                    var json = JsonSerializer.Deserialize<JsonElement>(response);
+                    
+                    if (json.TryGetProperty("recordings", out var recordings) && recordings.GetArrayLength() > 0)
+                    {
+                        var recording = recordings[0];
+                        if (recording.TryGetProperty("length", out var lengthElement))
+                        {
+                            var lengthMs = lengthElement.GetInt32();
+                            if (lengthMs > 0)
+                                return lengthMs / 1000;
+                        }
+                    }
+                }
+                catch
+                {
+                    
+                }
+                return null;
+            }
+
+            private static async Task<int?> GetDurationFromLastFM(string title, string artist)
+            {
+                try
+                {
+                    var url = $"https://ws.audioscrobbler.com/2.0/?method=track.getInfo&api_key=b25b959554ed76058ac220b7b2e0a026&artist={Uri.EscapeDataString(artist)}&track={Uri.EscapeDataString(title)}&format=json";
+                    using var client = new HttpClient();
+                    client.Timeout = TimeSpan.FromSeconds(6);
+                    var response = await client.GetStringAsync(url);
+                    var json = JsonSerializer.Deserialize<JsonElement>(response);
+                    
+                    if (json.TryGetProperty("track", out var track))
+                    {
+                        if (track.TryGetProperty("duration", out var durationElement))
+                        {
+                            var durationStr = durationElement.GetString();
+                            if (int.TryParse(durationStr, out var durationMs) && durationMs > 0)
+                                return durationMs / 1000;
+                        }
+                    }
+                }
+                catch
+                {
+                    
+                }
+                return null;
             }
 
             private static JoeColorRgb ParseJoeColor(string joecolor)
@@ -443,6 +559,7 @@ namespace Music
 
         public class Track
         {
+            public string Key { get; set; }
             public string Title { get; set; }
             public string Subtitle { get; set; }
             public string Isrc { get; set; }
@@ -478,10 +595,9 @@ namespace Music
             public double Offset { get; set; }
         }
 
-
-
         public class ShazamResult : Music
         {
+            public string Id { get; set; }
             public bool Success { get; set; }
             public double? Offset { get; set; }
             public double? TotalS { get; set; }
@@ -492,6 +608,7 @@ namespace Music
             public string Isrc { get; set; }
             public string CoverArtUrl { get; set; }
             public JoeColorRgb JoeColor { get; set; }
+            public int? DurationSeconds { get; set; }
         }
 
         public class JoeColorRgb
@@ -511,7 +628,7 @@ namespace Music
                         var color = solidColorBrush.Color;
                         return $"{color.R:X2}{color.G:X2}{color.B:X2}";
                     }
-                    return "000000"; // Valor padrão caso não seja SolidColorBrush
+                    return "000000";
                 }
 
                 return $"b:{BrushToHex(Background)}p:{BrushToHex(Primary)}s:{BrushToHex(Secondary)}t:{BrushToHex(Tertiary)}q:{BrushToHex(Quaternary)}";
@@ -862,145 +979,6 @@ namespace Music
 
                 ProcessedSamples -= samplesToRemove;
                 if (ProcessedSamples < 0) ProcessedSamples = 0;
-            }
-        }
-
-
-
-        public class SignatureCompareResult
-        {
-            public bool IsMatch { get; set; }
-            public int BestOffset { get; set; }
-            public int BestOffsetMatches { get; set; }
-            public double ZScore { get; set; }
-            public double PValueApprox { get; set; }
-            public int TotalMatches { get; set; }
-        }
-
-        public static class FingerprintComparer
-        {
-            private const int MAX_TARGET_STRIPES = 47; // lookahead (como no finder)
-            private const int MAX_OFFSET_BUCKETS = 1000; // tamanho do histograma (suficiente)
-            private const int MAX_ANCHORS = 5000; // limitar para desempenho se necessário
-
-            // Gera chaves (anchor-target) para um conjunto de landmarks
-            private static IEnumerable<(string key, int anchorStripe, int anchorStripeInt)> GeneratePairs(IEnumerable<LandmarkInfo> landmarks)
-            {
-                var list = landmarks.OrderBy(l => l.StripeIndex).ToList();
-                int n = list.Count;
-                // limitar big-O se necessário
-                for (int i = 0; i < n; i++)
-                {
-                    var a = list[i];
-                    int anchorsStripe = a.StripeIndex;
-                    // para cada anchor, emparelhar com próximos dentro de janela
-                    for (int j = i + 1; j < n && list[j].StripeIndex - anchorsStripe <= MAX_TARGET_STRIPES; j++)
-                    {
-                        var b = list[j];
-                        int delta = b.StripeIndex - anchorsStripe;
-                        // quantizar bins para reduzir sensibilidade
-                        int binA = (int)Math.Round(a.InterpolatedBin);
-                        int binB = (int)Math.Round(b.InterpolatedBin);
-
-                        // construir chave: (binA, binB, delta)
-                        string key = $"{binA}:{binB}:{delta}";
-                        yield return (key, anchorsStripe, anchorsStripe);
-                    }
-                }
-            }
-
-            public static SignatureCompareResult Compare(IEnumerable<LandmarkInfo> A, IEnumerable<LandmarkInfo> B)
-            {
-                var pairsA = GeneratePairs(A).ToList();
-                var pairsB = GeneratePairs(B).ToList();
-
-                // Index pairsB por chave -> lista de anchor stripes (onde apareceu)
-                var dictB = new Dictionary<string, List<int>>();
-                foreach (var p in pairsB)
-                {
-                    if (!dictB.TryGetValue(p.key, out var lst)) { lst = new List<int>(); dictB[p.key] = lst; }
-                    lst.Add(p.anchorStripe);
-                }
-
-                // histograma de offsets (offset = stripeA - stripeB)
-                var offsetCounts = new Dictionary<int, int>();
-                int totalMatches = 0;
-
-                foreach (var pa in pairsA)
-                {
-                    if (dictB.TryGetValue(pa.key, out var anchorsB))
-                    {
-                        foreach (var bStripe in anchorsB)
-                        {
-                            int offset = pa.anchorStripe - bStripe; // se A começou depois, offset>0
-                            if (!offsetCounts.TryGetValue(offset, out var c)) c = 0;
-                            offsetCounts[offset] = c + 1;
-                            totalMatches++;
-                        }
-                    }
-                }
-
-                if (offsetCounts.Count == 0)
-                {
-                    return new SignatureCompareResult
-                    {
-                        IsMatch = false,
-                        BestOffset = 0,
-                        BestOffsetMatches = 0,
-                        TotalMatches = 0,
-                        ZScore = 0,
-                        PValueApprox = 1.0
-                    };
-                }
-
-                // melhor offset
-                var bestPair = offsetCounts.OrderByDescending(kv => kv.Value).First();
-                int bestOffset = bestPair.Key;
-                int bestCount = bestPair.Value;
-
-                // estimativa do "esperado por acaso" por bucket
-                // espaço de chaves possível S ≈ (#bins)^2 * (MAX_TARGET_STRIPES)
-                // mas usamos uma estimativa empírica: número de buckets observados
-                int bucketsObserved = Math.Max(1, offsetCounts.Count);
-                // total de pairs gerados em A e B
-                int nPairsA = pairsA.Count;
-                int nPairsB = pairsB.Count;
-
-                // estimativa simples: mu = totalMatches / bucketsObserved
-                double mu = (double)totalMatches / bucketsObserved;
-                double sigma = Math.Sqrt(Math.Max(1.0, mu)); // approx (Poisson-like)
-
-                // z-score
-                double z = (bestCount - mu) / (sigma > 0 ? sigma : 1.0);
-
-                // p-value aproximado via cauda normal (one-sided)
-                double pValue = NormalTailFromZ(z);
-
-                // heurística de decisão
-                bool isMatch = (bestCount >= 8 && z > 6) || (bestCount >= 10 && z > 4);
-                // (esses thresholds podem ser ajustados empiricamente)
-
-                return new SignatureCompareResult
-                {
-                    IsMatch = isMatch,
-                    BestOffset = bestOffset,
-                    BestOffsetMatches = bestCount,
-                    TotalMatches = totalMatches,
-                    ZScore = z,
-                    PValueApprox = pValue
-                };
-            }
-
-            // aproximação da cauda superior da Normal(0,1)
-            private static double NormalTailFromZ(double z)
-            {
-                if (z <= 0) return 0.5;
-                // usar aprox de erro complementar (erfc), aqui implementação rápida
-                // Abramowitz-Stegun approximation (Rational approximation)
-                double t = 1.0 / (1.0 + 0.2316419 * z);
-                double d = 0.3989423 * Math.Exp(-z * z / 2.0);
-                double prob = d * t * (0.3193815 + t * (-0.3565638 + t * (1.781478 + t * (-1.821256 + t * 1.330274))));
-                return prob; // esta é a cauda superior aproximada
             }
         }
     }
