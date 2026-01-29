@@ -129,14 +129,14 @@ namespace Music
                     {
                         LargeImageKey = _currentTrack.CoverArtUrl,
                     },
-                    Buttons = new[]
-                    {
+                    Buttons =
+                    [
                         new Button
-                        {
+                        {                           
                             Label = "Download Project Source",
                             Url = $"https://github.com/GatoEVX4/MusicRecognizer-Visualizer"
                         }
-                    }
+                    ]
                 };
 
                 _rpcClient.SetPresence(presence);

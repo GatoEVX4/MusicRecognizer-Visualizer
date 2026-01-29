@@ -20,6 +20,10 @@ The UI is minimal and supports both taskbar-style and floating window modes.
 - Simple audio spectrum visualizer
 - Taskbar overlay mode
 - Floating window mode
+- **Music history** - Track all recognized songs
+- **Smart recommendations** - Get similar tracks based on your listening habits
+- **Settings panel** - Customize recognition, visualizer, and privacy settings
+- **Quick actions** - Open tracks in Spotify, YouTube, or Apple Music
 
 ## Demo
 
@@ -58,6 +62,9 @@ https://streamable.com/6zhf9a
 ### Controls
 
 - Press `L` to toggle between taskbar and window modes
+- Press `Ctrl+H` to open history and recommendations
+- Press `Ctrl+S` to open settings
+- Right-click on the window for quick menu
 - Drag the window to reposition it
 
 ## Technical Notes
@@ -80,10 +87,48 @@ https://streamable.com/6zhf9a
 - Time-offset pairing
 - CRC32 checksum for signature validation
 
+## New Features
+
+### History
+
+All recognized tracks are automatically saved and can be accessed via `Ctrl+H`. The history includes:
+- Track title, artist, and cover art
+- Recognition date and time
+- Recognition count (how many times the track was detected)
+- Quick actions to open in Spotify, YouTube, or Shazam
+- **Real-time updates** - The window automatically refreshes when new tracks are recognized
+
+### Smart Recommendations
+
+When a track is recognized 3 times, the app automatically fetches similar tracks from Shazam's recommendation API. The recommendations tab shows:
+- Top 5 most recurring tracks across all your recognized music
+- Relevance score based on frequency
+- Direct links to streaming platforms
+- **Live updates** - Recommendations refresh automatically as new data becomes available
+
+The recommendation algorithm analyzes all similar tracks from your listening history and surfaces the most common suggestions, ensuring you discover music aligned with your taste.
+
+### Settings
+
+Access via `Ctrl+S` or right-click menu. Customize:
+- Recognition delays (min/max)
+- Visualizer settings (bars count, FPS)
+- History preferences (enable/disable, max items)
+- Discord Rich Presence integration
+- Clear history option
+
+### Data Storage
+
+All data is stored locally in JSON format at:
+```
+%APPDATA%\MusicRecognizer\data.json
+```
+
 ## Limitations
 
-- Recognition relies on Shazam’s database
+- Recognition relies on Shazam's database
 ## Disclaimer
 
 This project is for personal and educational use.
 Use of Shazam’s API must comply with their terms of service.
+

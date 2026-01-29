@@ -1,0 +1,294 @@
+<Window
+    x:Class="Music.HistoryWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    Title="Histórico e Recomendações - Music Recognizer"
+    Width="800"
+    Height="600"
+    Background="#1E1E1E"
+    WindowStartupLocation="CenterScreen"
+    mc:Ignorable="d">
+    <Window.Resources>
+        <Style TargetType="TextBlock">
+            <Setter Property="Foreground" Value="White" />
+        </Style>
+        <Style x:Key="TabButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="Foreground" Value="#CCCCCC" />
+            <Setter Property="BorderThickness" Value="0,0,0,2" />
+            <Setter Property="BorderBrush" Value="Transparent" />
+            <Setter Property="Padding" Value="20,10" />
+            <Setter Property="FontSize" Value="14" />
+            <Setter Property="Cursor" Value="Hand" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border
+                            Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Foreground" Value="White" />
+                </Trigger>
+                <Trigger Property="Tag" Value="Active">
+                    <Setter Property="Foreground" Value="White" />
+                    <Setter Property="BorderBrush" Value="#0E639C" />
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+    </Window.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <!--  Tabs  -->
+        <Border Grid.Row="0" Background="#252526" BorderBrush="#3F3F46" BorderThickness="0,0,0,1">
+            <Grid>
+                <StackPanel Orientation="Horizontal">
+                    <Button
+                        x:Name="HistoryTabButton"
+                        Click="HistoryTabButton_Click"
+                        Content="Histórico"
+                        Style="{StaticResource TabButtonStyle}"
+                        Tag="Active" />
+                    <Button
+                        x:Name="RecommendationsTabButton"
+                        Click="RecommendationsTabButton_Click"
+                        Content="Recomendações"
+                        Style="{StaticResource TabButtonStyle}" />
+                </StackPanel>
+                
+                <!--  Refresh Button  -->
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="15,0">
+                    <TextBlock 
+                        x:Name="LastUpdateText"
+                        VerticalAlignment="Center"
+                        Margin="0,0,10,0"
+                        FontSize="11"
+                        Foreground="#999999"
+                        Text="Atualização automática ativa" />
+                    <Button
+                        x:Name="RefreshButton"
+                        Click="RefreshButton_Click"
+                        Content="🔄 Atualizar"
+                        Background="Transparent"
+                        Foreground="#CCCCCC"
+                        BorderThickness="0"
+                        Padding="10,5"
+                        FontSize="12"
+                        Cursor="Hand">
+                        <Button.Style>
+                            <Style TargetType="Button">
+                                <Setter Property="Background" Value="Transparent" />
+                                <Setter Property="Template">
+                                    <Setter.Value>
+                                        <ControlTemplate TargetType="Button">
+                                            <Border Background="{TemplateBinding Background}" Padding="{TemplateBinding Padding}" CornerRadius="3">
+                                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                            </Border>
+                                        </ControlTemplate>
+                                    </Setter.Value>
+                                </Setter>
+                                <Style.Triggers>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter Property="Background" Value="#3F3F46" />
+                                    </Trigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Button.Style>
+                    </Button>
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <!--  Content  -->
+        <Grid Grid.Row="1">
+            <!--  Histórico  -->
+            <Grid x:Name="HistoryPanel" Visibility="Visible">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+
+                <Border Grid.Row="0" Background="#252526" Padding="15">
+                    <TextBlock FontSize="18" FontWeight="SemiBold" Text="Suas músicas reconhecidas" />
+                </Border>
+
+                <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+                    <ItemsControl x:Name="HistoryList" Margin="10">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Border
+                                    Margin="5"
+                                    Background="#252526"
+                                    BorderBrush="#3F3F46"
+                                    BorderThickness="1"
+                                    CornerRadius="5"
+                                    Cursor="Hand"
+                                    MouseDown="HistoryItem_MouseDown"
+                                    Tag="{Binding}">
+                                    <Grid Margin="15">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="60" />
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="Auto" />
+                                        </Grid.ColumnDefinitions>
+
+                                        <!--  Cover  -->
+                                        <Border Grid.Column="0" CornerRadius="5">
+                                            <Image
+                                                Width="60"
+                                                Height="60"
+                                                RenderOptions.BitmapScalingMode="HighQuality"
+                                                Source="{Binding CoverArtUrl}"
+                                                Stretch="UniformToFill">
+                                                <Image.Clip>
+                                                    <RectangleGeometry
+                                                        RadiusX="5"
+                                                        RadiusY="5"
+                                                        Rect="0,0,60,60" />
+                                                </Image.Clip>
+                                            </Image>
+                                        </Border>
+
+                                        <!--  Info  -->
+                                        <StackPanel Grid.Column="1" Margin="15,0,0,0" VerticalAlignment="Center">
+                                            <TextBlock
+                                                FontSize="16"
+                                                FontWeight="SemiBold"
+                                                Text="{Binding Title}" />
+                                            <TextBlock
+                                                Margin="0,3,0,0"
+                                                FontSize="13"
+                                                Foreground="#CCCCCC"
+                                                Text="{Binding Artist}" />
+                                            <TextBlock
+                                                Margin="0,5,0,0"
+                                                FontSize="11"
+                                                Foreground="#999999">
+                                                <Run Text="Reconhecido em:" />
+                                                <Run Text="{Binding RecognizedAt, StringFormat='dd/MM/yyyy HH:mm'}" />
+                                                <Run Text=" • " />
+                                                <Run Text="{Binding RecognitionCount}" />
+                                                <Run Text=" vez(es)" />
+                                            </TextBlock>
+                                        </StackPanel>
+
+                                        <!--  Actions  -->
+                                        <StackPanel
+                                            Grid.Column="2"
+                                            VerticalAlignment="Center"
+                                            Orientation="Horizontal">
+                                            <TextBlock
+                                                Margin="10,0"
+                                                FontSize="12"
+                                                Foreground="#999999"
+                                                Text="{Binding Genre}" />
+                                        </StackPanel>
+                                    </Grid>
+                                </Border>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </ScrollViewer>
+            </Grid>
+
+            <!--  Recomendações  -->
+            <Grid x:Name="RecommendationsPanel" Visibility="Collapsed">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+
+                <Border Grid.Row="0" Background="#252526" Padding="15">
+                    <StackPanel>
+                        <TextBlock FontSize="18" FontWeight="SemiBold" Text="Músicas recomendadas para você" />
+                        <TextBlock
+                            Margin="0,5,0,0"
+                            FontSize="12"
+                            Foreground="#CCCCCC"
+                            Text="Baseado nas suas músicas mais reconhecidas" />
+                    </StackPanel>
+                </Border>
+
+                <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+                    <ItemsControl x:Name="RecommendationsList" Margin="10">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Border
+                                    Margin="5"
+                                    Background="#252526"
+                                    BorderBrush="#3F3F46"
+                                    BorderThickness="1"
+                                    CornerRadius="5"
+                                    Cursor="Hand"
+                                    MouseDown="RecommendationItem_MouseDown"
+                                    Tag="{Binding}">
+                                    <Grid Margin="15">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="60" />
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="Auto" />
+                                        </Grid.ColumnDefinitions>
+
+                                        <!--  Cover  -->
+                                        <Border Grid.Column="0" CornerRadius="5">
+                                            <Image
+                                                Width="60"
+                                                Height="60"
+                                                RenderOptions.BitmapScalingMode="HighQuality"
+                                                Source="{Binding CoverArtUrl}"
+                                                Stretch="UniformToFill">
+                                                <Image.Clip>
+                                                    <RectangleGeometry
+                                                        RadiusX="5"
+                                                        RadiusY="5"
+                                                        Rect="0,0,60,60" />
+                                                </Image.Clip>
+                                            </Image>
+                                        </Border>
+
+                                        <!--  Info  -->
+                                        <StackPanel Grid.Column="1" Margin="15,0,0,0" VerticalAlignment="Center">
+                                            <TextBlock
+                                                FontSize="16"
+                                                FontWeight="SemiBold"
+                                                Text="{Binding Title}" />
+                                            <TextBlock
+                                                Margin="0,3,0,0"
+                                                FontSize="13"
+                                                Foreground="#CCCCCC"
+                                                Text="{Binding Artist}" />
+                                        </StackPanel>
+
+                                        <!--  Popularity  -->
+                                        <StackPanel Grid.Column="2" VerticalAlignment="Center">
+                                            <Border
+                                                Background="#0E639C"
+                                                CornerRadius="10"
+                                                Padding="10,5">
+                                                <TextBlock FontSize="11" Text="{Binding OccurrenceCount, StringFormat='Relevância: {0}'}" />
+                                            </Border>
+                                        </StackPanel>
+                                    </Grid>
+                                </Border>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </ScrollViewer>
+            </Grid>
+        </Grid>
+    </Grid>
+</Window>
+

@@ -11,16 +11,25 @@
     AllowsTransparency="True"
     Background="Transparent"
     MouseDown="Window_MouseDown"
+    MouseRightButtonDown="Window_MouseRightButtonDown"
     ResizeMode="NoResize"
     ShowInTaskbar="False"
     WindowStartupLocation="CenterScreen"
     WindowStyle="None"
     mc:Ignorable="d">
+    <Window.ContextMenu>
+        <ContextMenu>
+            <MenuItem Click="HistoryMenuItem_Click" Header="Histórico (Ctrl+H)" />
+            <MenuItem Click="SettingsMenuItem_Click" Header="Configurações (Ctrl+S)" />
+            <Separator />
+            <MenuItem Click="ExitMenuItem_Click" Header="Sair" />
+        </ContextMenu>
+    </Window.ContextMenu>
     <Border
         x:Name="MainBorder"
         BorderBrush="#424242"
         BorderThickness="1"
         CornerRadius="5">
-        <local:Recognizer x:Name="Recognizer" />
+        <local:Recognizer x:Name="MainRecognizer" />
     </Border>
 </Window>

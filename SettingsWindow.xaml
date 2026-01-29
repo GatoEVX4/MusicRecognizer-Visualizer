@@ -1,0 +1,141 @@
+<Window
+    x:Class="Music.SettingsWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    Title="Configurações - Music Recognizer"
+    Width="500"
+    Height="450"
+    Background="#1E1E1E"
+    ResizeMode="NoResize"
+    WindowStartupLocation="CenterScreen"
+    mc:Ignorable="d">
+    <Window.Resources>
+        <Style TargetType="TextBlock">
+            <Setter Property="Foreground" Value="White" />
+            <Setter Property="FontSize" Value="14" />
+        </Style>
+        <Style TargetType="CheckBox">
+            <Setter Property="Foreground" Value="White" />
+            <Setter Property="FontSize" Value="13" />
+            <Setter Property="Margin" Value="0,5,0,5" />
+        </Style>
+        <Style TargetType="TextBox">
+            <Setter Property="Background" Value="#2D2D30" />
+            <Setter Property="Foreground" Value="White" />
+            <Setter Property="BorderBrush" Value="#3F3F46" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="Padding" Value="5" />
+            <Setter Property="FontSize" Value="13" />
+        </Style>
+        <Style TargetType="Button">
+            <Setter Property="Background" Value="#0E639C" />
+            <Setter Property="Foreground" Value="White" />
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="Padding" Value="15,8" />
+            <Setter Property="FontSize" Value="13" />
+            <Setter Property="Cursor" Value="Hand" />
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="#1177BB" />
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+    </Window.Resources>
+
+    <Grid Margin="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <TextBlock
+            Grid.Row="0"
+            FontSize="20"
+            FontWeight="Bold"
+            Text="Configurações" />
+
+        <ScrollViewer Grid.Row="1" Margin="0,20,0,20" VerticalScrollBarVisibility="Auto">
+            <StackPanel>
+                <!--  Reconhecimento  -->
+                <TextBlock
+                    FontSize="16"
+                    FontWeight="SemiBold"
+                    Text="Reconhecimento" />
+                <Separator Margin="0,5,0,10" Background="#3F3F46" />
+
+                <TextBlock Margin="0,5,0,5" Text="Delay mínimo entre reconhecimentos (ms):" />
+                <TextBox x:Name="DelayMinTextBox" Text="2200" />
+
+                <TextBlock Margin="0,10,0,5" Text="Delay máximo entre reconhecimentos (ms):" />
+                <TextBox x:Name="DelayMaxTextBox" Text="5500" />
+
+                <!--  Visualizador  -->
+                <TextBlock
+                    Margin="0,20,0,0"
+                    FontSize="16"
+                    FontWeight="SemiBold"
+                    Text="Visualizador" />
+                <Separator Margin="0,5,0,10" Background="#3F3F46" />
+
+                <TextBlock Margin="0,5,0,5" Text="Número de barras:" />
+                <TextBox x:Name="VisualizerBarsTextBox" Text="32" />
+
+                <TextBlock Margin="0,10,0,5" Text="FPS do visualizador:" />
+                <TextBox x:Name="VisualizerFpsTextBox" Text="60" />
+
+                <!--  Histórico  -->
+                <TextBlock
+                    Margin="0,20,0,0"
+                    FontSize="16"
+                    FontWeight="SemiBold"
+                    Text="Histórico" />
+                <Separator Margin="0,5,0,10" Background="#3F3F46" />
+
+                <CheckBox x:Name="SaveHistoryCheckBox" Content="Salvar histórico de músicas reconhecidas" IsChecked="True" />
+
+                <TextBlock Margin="0,10,0,5" Text="Máximo de itens no histórico:" />
+                <TextBox x:Name="MaxHistoryTextBox" Text="1000" />
+
+                <!--  Integrações  -->
+                <TextBlock
+                    Margin="0,20,0,0"
+                    FontSize="16"
+                    FontWeight="SemiBold"
+                    Text="Integrações" />
+                <Separator Margin="0,5,0,10" Background="#3F3F46" />
+
+                <CheckBox x:Name="DiscordRpcCheckBox" Content="Ativar Discord Rich Presence" IsChecked="True" />
+
+                <!--  Dados  -->
+                <TextBlock
+                    Margin="0,20,0,0"
+                    FontSize="16"
+                    FontWeight="SemiBold"
+                    Text="Dados" />
+                <Separator Margin="0,5,0,10" Background="#3F3F46" />
+
+                <Button
+                    x:Name="ClearHistoryButton"
+                    Margin="0,5,0,0"
+                    HorizontalAlignment="Left"
+                    Background="#D13438"
+                    Click="ClearHistoryButton_Click"
+                    Content="Limpar histórico" />
+            </StackPanel>
+        </ScrollViewer>
+
+        <StackPanel Grid.Row="2" HorizontalAlignment="Right" Orientation="Horizontal">
+            <Button
+                x:Name="CancelButton"
+                Margin="0,0,10,0"
+                Background="#3F3F46"
+                Click="CancelButton_Click"
+                Content="Cancelar" />
+            <Button x:Name="SaveButton" Click="SaveButton_Click" Content="Salvar" />
+        </StackPanel>
+    </Grid>
+</Window>
+

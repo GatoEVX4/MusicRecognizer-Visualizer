@@ -172,7 +172,6 @@ namespace Music
                             {
                                 MusicImgBackground.Visibility = Visibility.Collapsed;
                                 InfoBar.Visibility = Visibility.Collapsed;
-                                Visualizer.Margin = new Thickness(10, 0, 10, 0);
                             });
                             break;
                         }
@@ -205,7 +204,6 @@ namespace Music
                                 {
                                     MusicImgBackground.Visibility = Visibility.Collapsed;
                                     InfoBar.Visibility = Visibility.Collapsed;
-                                    Visualizer.Margin = new Thickness(10, 0, 10, 0);
                                 });
                             }
                             break;
@@ -221,6 +219,25 @@ namespace Music
                     lastrecognized = DateTime.Now;
                     lastresult = result;
                     Logger.Log($"Recognized: {result.Artist} {result.Title}", ConsoleColor.Green);
+
+                    // Adicionar ao histórico
+                    DataManager.Instance.AddToHistory(result);
+
+                    // Buscar recomendações se reconhecido 8 vezes
+                    var recognitionCount = DataManager.Instance.GetRecognitionCount(result.Id);
+                    if (recognitionCount == 8)
+                    {
+                        Logger.Log($"Track recognized 8 times, fetching recommendations...", ConsoleColor.Magenta);
+                        _ = Task.Run(async () =>
+                        {
+                            var recommendations = await RecommendationService.GetSimilarTracksAsync(result.Id);
+                            if (recommendations.Any())
+                            {
+                                DataManager.Instance.SaveSimilarTracks(result.Id, recommendations);
+                                Logger.Log($"Saved {recommendations.Count} recommendations", ConsoleColor.Green);
+                            }
+                        });
+                    }
 
                     await Dispatcher.InvokeAsync(() =>
                     {
@@ -289,7 +306,6 @@ namespace Music
                 MusicImageGlow.Background = null;
 
                 stackpa.Margin = new Thickness(10, 0, 10, 0);
-                Visualizer.Margin = new Thickness(10, 0, 10, 0);
                 return;
             }
 
@@ -302,7 +318,6 @@ namespace Music
             MusicImageGlow.Background = brush;
 
             stackpa.Margin = new Thickness(50, 0, 10, 0);
-            Visualizer.Margin = new Thickness(50, 0, 10, 0);
         }
 
         public static bool IsColorLight(Color color)
@@ -406,32 +421,20 @@ namespace Music
 
             public static async Task<int?> GetTrackDurationAsync(string isrc, string title, string artist)
             {
-                if (string.IsNullOrEmpty(isrc) && (string.IsNullOrEmpty(title) || string.IsNullOrEmpty(artist)))
+                if (string.IsNullOrWhiteSpace(isrc) && (string.IsNullOrWhiteSpace(title) || string.IsNullOrWhiteSpace(artist)))
                     return null;
 
                 try
                 {
-                    if (!string.IsNullOrEmpty(isrc))
-                    {
-                        var duration = await GetDurationFromMusicBrainzByIsrc(isrc);
-                        if (duration.HasValue)
-                            return duration.Value;
-                    }
+                    if (!string.IsNullOrWhiteSpace(title) && !string.IsNullOrWhiteSpace(artist))
+                        return await GetDurationFromLastFM(title, artist)
+                            ?? await GetDurationFromMusicBrainzByTitle(title, artist);
 
-                    if (!string.IsNullOrEmpty(title) && !string.IsNullOrEmpty(artist))
-                    {
-                        var duration = await GetDurationFromMusicBrainzByTitle(title, artist);
-                        if (duration.HasValue)
-                            return duration.Value;
-
-                        duration = await GetDurationFromLastFM(title, artist);
-                        if (duration.HasValue)
-                            return duration.Value;
-                    }
+                    if (!string.IsNullOrWhiteSpace(isrc))
+                        return await GetDurationFromMusicBrainzByIsrc(isrc);
                 }
                 catch
                 {
-                    
                 }
 
                 return null;

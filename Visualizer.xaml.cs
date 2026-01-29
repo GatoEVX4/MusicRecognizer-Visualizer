@@ -20,7 +20,7 @@ namespace Music
         private TimeSpan _frameInterval;
         private int VerticalSmoothness;
         private int HorizontalSmoothness;
-        private int BarCount;
+        public int BarCount;
         public Brush brush = Brushes.White;
 
         public Visualizer(int fps, int bars, int vsmooth, int hsmooth)
