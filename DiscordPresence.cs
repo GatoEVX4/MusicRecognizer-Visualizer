@@ -128,6 +128,14 @@ namespace Music
                     Assets = new Assets
                     {
                         LargeImageKey = _currentTrack.CoverArtUrl,
+                    },
+                    Buttons = new[]
+                    {
+                        new Button
+                        {
+                            Label = "Download Project Source",
+                            Url = $"https://github.com/GatoEVX4/MusicRecognizer-Visualizer"
+                        }
                     }
                 };
 

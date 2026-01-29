@@ -33,7 +33,6 @@ namespace Music
     {
         private DateTime lastrecognized;
         private byte[] lastsigsent = [];
-        private List<LandmarkInfo> referenceLandmarks = [];
         private ShazamResult? lastresult;
         private int streak = 1;
         private int siglenght = 0;
@@ -221,8 +220,7 @@ namespace Music
 
                     lastrecognized = DateTime.Now;
                     lastresult = result;
-
-                    App.DiscordPresence?.UpdateMusic(result);
+                    Logger.Log($"Recognized: {result.Artist} {result.Title}", ConsoleColor.Green);
 
                     await Dispatcher.InvokeAsync(() =>
                     {
@@ -231,7 +229,8 @@ namespace Music
                         UpdateUIWithSong(result);
                     });
 
-                    Logger.Log($"Recognized: {result.Artist} {result.Title}", ConsoleColor.Green);
+                    result.DurationSeconds = await ShazamApi.GetTrackDurationAsync(result.Isrc, result.Title, result.Artist);
+                    App.DiscordPresence?.UpdateMusic(result);
                     break;
                 }
             }
@@ -385,7 +384,6 @@ namespace Music
                             RetryMs = data.RetryMs
                         };
 
-                        result.DurationSeconds = await GetTrackDurationAsync(result.Isrc, result.Title, result.Artist);
                         return (result, jsonString);
                     }
 
@@ -406,7 +404,7 @@ namespace Music
                 }
             }
 
-            private static async Task<int?> GetTrackDurationAsync(string isrc, string title, string artist)
+            public static async Task<int?> GetTrackDurationAsync(string isrc, string title, string artist)
             {
                 if (string.IsNullOrEmpty(isrc) && (string.IsNullOrEmpty(title) || string.IsNullOrEmpty(artist)))
                     return null;
