@@ -13,7 +13,7 @@ namespace Music
 
         private void LoadSettings()
         {
-            var settings = DataManager.Instance.Data.Settings;
+            var settings = DataManager.Instance.Settings;
 
             DelayMinTextBox.Text = settings.RecognitionDelayMin.ToString();
             DelayMaxTextBox.Text = settings.RecognitionDelayMax.ToString();
@@ -28,7 +28,7 @@ namespace Music
         {
             try
             {
-                var settings = DataManager.Instance.Data.Settings;
+                var settings = new AppSettings();
 
                 if (int.TryParse(DelayMinTextBox.Text, out int delayMin))
                     settings.RecognitionDelayMin = Math.Max(1000, delayMin);
@@ -49,7 +49,7 @@ namespace Music
 
                 settings.EnableDiscordRichPresence = DiscordRpcCheckBox.IsChecked ?? true;
 
-                DataManager.Instance.Save();
+                DataManager.Instance.SaveSettings(settings);
 
                 MessageBox.Show("Configurações salvas com sucesso!\n\nAlgumas alterações podem exigir reinicialização do aplicativo.", 
                     "Configurações", MessageBoxButton.OK, MessageBoxImage.Information);
@@ -86,4 +86,6 @@ namespace Music
         }
     }
 }
+
+
 

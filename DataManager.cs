@@ -1,33 +1,25 @@
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace Music
 {
     public class DataManager
     {
-        private static readonly string DataFilePath = Path.Combine(
-            Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
-            "MusicRecognizer",
-            "data.json"
-        );
-
         private static DataManager _instance;
         private static readonly object _lock = new object();
 
-        public AppData Data { get; private set; }
+        private readonly DatabaseManager _db;
+        private AppSettings _settings;
 
-        // Eventos para notificar mudanças
         public event EventHandler HistoryChanged;
         public event EventHandler RecommendationsChanged;
 
         private DataManager()
         {
-            Data = new AppData();
-            Load();
+            _db = new DatabaseManager();
+            _settings = _db.GetSettings();
         }
 
         public static DataManager Instance
@@ -45,6 +37,8 @@ namespace Music
             }
         }
 
+        public AppSettings Settings => _settings;
+
         protected virtual void OnHistoryChanged()
         {
             HistoryChanged?.Invoke(this, EventArgs.Empty);
@@ -55,148 +49,61 @@ namespace Music
             RecommendationsChanged?.Invoke(this, EventArgs.Empty);
         }
 
-        public void Load()
-        {
-            try
-            {
-                if (File.Exists(DataFilePath))
-                {
-                    var json = File.ReadAllText(DataFilePath);
-                    Data = JsonSerializer.Deserialize<AppData>(json) ?? new AppData();
-                }
-                else
-                {
-                    Data = new AppData();
-                }
-            }
-            catch (Exception ex)
-            {
-                Logger.Log($"Error loading data: {ex.Message}", ConsoleColor.Red);
-                Data = new AppData();
-            }
-        }
-
-        public void Save()
-        {
-            try
-            {
-                var directory = Path.GetDirectoryName(DataFilePath);
-                if (!Directory.Exists(directory))
-                {
-                    Directory.CreateDirectory(directory);
-                }
-
-                var options = new JsonSerializerOptions
-                {
-                    WriteIndented = true
-                };
-
-                var json = JsonSerializer.Serialize(Data, options);
-                File.WriteAllText(DataFilePath, json);
-            }
-            catch (Exception ex)
-            {
-                Logger.Log($"Error saving data: {ex.Message}", ConsoleColor.Red);
-            }
-        }
-
-        public async Task SaveAsync()
-        {
-            await Task.Run(() => Save());
-        }
-
         public void AddToHistory(API.ShazamResult result)
         {
-            if (!Data.Settings.SaveHistory)
+            if (!_settings.SaveHistory)
                 return;
 
-            var existing = Data.History.FirstOrDefault(h => h.Id == result.Id);
+            var track = new RecognizedTrack(result);
             
-            if (existing != null)
+            var existingCount = _db.GetRecognitionCount(result.Id);
+            if (existingCount > 0)
             {
-                existing.RecognitionCount++;
-                existing.RecognizedAt = DateTime.Now;
-            }
-            else
-            {
-                Data.History.Insert(0, new RecognizedTrack(result));
-
-                // Limitar o histórico ao máximo configurado
-                if (Data.History.Count > Data.Settings.MaxHistoryItems)
-                {
-                    Data.History.RemoveAt(Data.History.Count - 1);
-                }
+                track.RecognitionCount = existingCount + 1;
             }
 
-            _ = SaveAsync();
-            OnHistoryChanged(); // Notificar mudança
+            _db.AddOrUpdateHistory(track);
+            OnHistoryChanged();
         }
 
         public int GetRecognitionCount(string trackId)
         {
-            var track = Data.History.FirstOrDefault(h => h.Id == trackId);
-            return track?.RecognitionCount ?? 0;
+            return _db.GetRecognitionCount(trackId);
         }
 
         public void SaveSimilarTracks(string trackId, List<RecommendedTrack> recommendations)
         {
-            Data.SimilarTracks[trackId] = recommendations;
-            _ = SaveAsync();
-            OnRecommendationsChanged(); // Notificar mudança
+            _db.SaveRecommendations(trackId, recommendations);
+            OnRecommendationsChanged();
         }
 
-        public List<RecommendedTrack> GetTopRecommendations(int count = 5)
+        public List<RecommendedTrack> GetTopRecommendations(int count = 50)
         {
-            var allRecommendations = new Dictionary<string, RecommendedTrack>();
-
-            foreach (var trackRecommendations in Data.SimilarTracks.Values)
-            {
-                foreach (var track in trackRecommendations)
-                {
-                    if (allRecommendations.ContainsKey(track.Key))
-                    {
-                        allRecommendations[track.Key].OccurrenceCount++;
-                    }
-                    else
-                    {
-                        var newTrack = new RecommendedTrack
-                        {
-                            Key = track.Key,
-                            Title = track.Title,
-                            Artist = track.Artist,
-                            CoverArtUrl = track.CoverArtUrl,
-                            ShazamUrl = track.ShazamUrl,
-                            SpotifySearchUri = track.SpotifySearchUri,
-                            AppleMusicUri = track.AppleMusicUri,
-                            OccurrenceCount = 1
-                        };
-                        allRecommendations[track.Key] = newTrack;
-                    }
-                }
-            }
-
-            // Filtrar músicas que já estão no histórico
-            var historyIds = Data.History.Select(h => h.Id).ToHashSet();
-            
-            return allRecommendations.Values
-                //.Where(r => !historyIds.Contains(r.Key))
-                .OrderByDescending(r => r.OccurrenceCount)
-                .Take(count)
-                .ToList();
+            return _db.GetTopRecommendations(count);
         }
 
-        public List<RecognizedTrack> GetHistory(int count = 50)
+        public List<RecognizedTrack> GetHistory(int count = 100)
         {
-            return Data.History.Take(count).ToList();
+            return _db.GetHistory(count);
         }
 
         public void ClearHistory()
         {
-            Data.History.Clear();
-            Data.SimilarTracks.Clear();
-            _ = SaveAsync();
+            _db.ClearAllData();
             OnHistoryChanged();
             OnRecommendationsChanged();
+        }
+
+        public void SaveSettings(AppSettings settings)
+        {
+            _settings = settings;
+            _db.SaveSettings(settings);
+        }
+
+        public void UpdateSettings(Action<AppSettings> updateAction)
+        {
+            updateAction(_settings);
+            _db.SaveSettings(_settings);
         }
     }
 }

@@ -223,11 +223,11 @@ namespace Music
                     // Adicionar ao histórico
                     DataManager.Instance.AddToHistory(result);
 
-                    // Buscar recomendações se reconhecido 8 vezes
+                    // Buscar recomendações se reconhecido 3 vezes
                     var recognitionCount = DataManager.Instance.GetRecognitionCount(result.Id);
-                    if (recognitionCount == 8)
+                    if (recognitionCount == 3)
                     {
-                        Logger.Log($"Track recognized 8 times, fetching recommendations...", ConsoleColor.Magenta);
+                        Logger.Log($"Track recognized 3 times, fetching recommendations...", ConsoleColor.Magenta);
                         _ = Task.Run(async () =>
                         {
                             var recommendations = await RecommendationService.GetSimilarTracksAsync(result.Id);
@@ -306,6 +306,7 @@ namespace Music
                 MusicImageGlow.Background = null;
 
                 stackpa.Margin = new Thickness(10, 0, 10, 0);
+                Visualizer.Margin = new Thickness(10, 0, 10, 0);
                 return;
             }
 
@@ -318,6 +319,7 @@ namespace Music
             MusicImageGlow.Background = brush;
 
             stackpa.Margin = new Thickness(50, 0, 10, 0);
+            Visualizer.Margin = new Thickness(50, 0, 10, 0);
         }
 
         public static bool IsColorLight(Color color)

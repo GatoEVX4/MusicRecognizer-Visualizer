@@ -119,9 +119,9 @@ Access via `Ctrl+S` or right-click menu. Customize:
 
 ### Data Storage
 
-All data is stored locally in JSON format at:
+All data is stored locally in SQLite database at:
 ```
-%APPDATA%\MusicRecognizer\data.json
+%APPDATA%\MusicRecognizer\music.db
 ```
 
 ## Limitations
