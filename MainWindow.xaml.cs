@@ -118,7 +118,6 @@ namespace Music
 
         private void PositionateTaskBar()
         {
-            _timer.Start();
             Height = 42;
             Left = 3;
             try
@@ -127,6 +126,13 @@ namespace Music
             }
             catch { }
             CurrentViewMode = ViewMode.TaskBar;
+
+            Dispatcher.BeginInvoke(() =>
+            {
+                var handle = new System.Windows.Interop.WindowInteropHelper(this).Handle;
+                SetWindowPos(handle, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE | SWP_SHOWWINDOW);
+                _timer.Start();
+            }, System.Windows.Threading.DispatcherPriority.Render);
         }
     }
 }
