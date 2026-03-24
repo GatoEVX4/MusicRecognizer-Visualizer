@@ -13,15 +13,24 @@ namespace Music
 
         private void LoadSettings()
         {
-            var settings = DataManager.Instance.Settings;
+            var s = DataManager.Instance.Settings;
 
-            DelayMinTextBox.Text = settings.RecognitionDelayMin.ToString();
-            DelayMaxTextBox.Text = settings.RecognitionDelayMax.ToString();
-            VisualizerBarsTextBox.Text = settings.VisualizerBars.ToString();
-            VisualizerFpsTextBox.Text = settings.VisualizerFps.ToString();
-            SaveHistoryCheckBox.IsChecked = settings.SaveHistory;
-            MaxHistoryTextBox.Text = settings.MaxHistoryItems.ToString();
-            DiscordRpcCheckBox.IsChecked = settings.EnableDiscordRichPresence;
+            DelayMinTextBox.Text          = s.RecognitionDelayMin.ToString();
+            DelayMaxTextBox.Text          = s.RecognitionDelayMax.ToString();
+            VisualizerBarsTextBox.Text    = s.VisualizerBars.ToString();
+            VisualizerFpsTextBox.Text     = s.VisualizerFps.ToString();
+            SaveHistoryCheckBox.IsChecked = s.SaveHistory;
+            MaxHistoryTextBox.Text        = s.MaxHistoryItems.ToString();
+            DiscordRpcCheckBox.IsChecked  = s.EnableDiscordRichPresence;
+
+            ConcurrentDownloadsSlider.Value = Math.Clamp(s.MaxConcurrentDownloads, 1, 10);
+        }
+
+        private void ConcurrentDownloadsSlider_ValueChanged(object sender,
+            System.Windows.RoutedPropertyChangedEventArgs<double> e)
+        {
+            if (ConcurrentDownloadsLabel != null)
+                ConcurrentDownloadsLabel.Text = ((int)ConcurrentDownloadsSlider.Value).ToString();
         }
 
         private void SaveButton_Click(object sender, RoutedEventArgs e)
@@ -48,6 +57,7 @@ namespace Music
                     settings.MaxHistoryItems = Math.Max(10, maxHistory);
 
                 settings.EnableDiscordRichPresence = DiscordRpcCheckBox.IsChecked ?? true;
+                settings.MaxConcurrentDownloads    = Math.Clamp((int)ConcurrentDownloadsSlider.Value, 1, 10);
 
                 DataManager.Instance.SaveSettings(settings);
 

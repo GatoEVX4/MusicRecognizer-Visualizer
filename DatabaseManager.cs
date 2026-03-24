@@ -69,10 +69,23 @@ namespace Music
                     Value TEXT NOT NULL
                 );
 
-                CREATE INDEX IF NOT EXISTS idx_history_recognized 
+                CREATE TABLE IF NOT EXISTS Downloads (
+                    TrackId TEXT PRIMARY KEY,
+                    Title TEXT NOT NULL,
+                    Artist TEXT NOT NULL,
+                    CoverArtUrl TEXT,
+                    Status TEXT NOT NULL DEFAULT 'Queued',
+                    Progress REAL NOT NULL DEFAULT 0,
+                    FilePath TEXT,
+                    QueuedAt TEXT NOT NULL,
+                    CompletedAt TEXT,
+                    ErrorMessage TEXT
+                );
+
+                CREATE INDEX IF NOT EXISTS idx_history_recognized
                     ON History(RecognizedAt DESC);
-                
-                CREATE INDEX IF NOT EXISTS idx_track_recommendations 
+
+                CREATE INDEX IF NOT EXISTS idx_track_recommendations
                     ON TrackRecommendations(TrackId);
             ";
             command.ExecuteNonQuery();
@@ -254,6 +267,51 @@ namespace Music
             return recommendations;
         }
 
+        public List<RecommendedTrack> GetRecommendationsForTrack(string trackId, int limit = 50)
+        {
+            var recommendations = new List<RecommendedTrack>();
+
+            using var connection = new SqliteConnection(_connectionString);
+            connection.Open();
+
+            var command = connection.CreateCommand();
+            command.CommandText = @"
+                SELECT 
+                    r.Key, 
+                    r.Title, 
+                    r.Artist, 
+                    r.CoverArtUrl, 
+                    r.ShazamUrl, 
+                    r.SpotifySearchUri, 
+                    r.AppleMusicUri,
+                    1 as OccurrenceCount
+                FROM Recommendations r
+                INNER JOIN TrackRecommendations tr ON r.Key = tr.RecommendationKey
+                WHERE tr.TrackId = $trackId
+                LIMIT $limit;
+            ";
+            command.Parameters.AddWithValue("$trackId", trackId);
+            command.Parameters.AddWithValue("$limit", limit);
+
+            using var reader = command.ExecuteReader();
+            while (reader.Read())
+            {
+                recommendations.Add(new RecommendedTrack
+                {
+                    Key = reader.GetString(0),
+                    Title = reader.GetString(1),
+                    Artist = reader.GetString(2),
+                    CoverArtUrl = reader.IsDBNull(3) ? null : reader.GetString(3),
+                    ShazamUrl = reader.IsDBNull(4) ? null : reader.GetString(4),
+                    SpotifySearchUri = reader.IsDBNull(5) ? null : reader.GetString(5),
+                    AppleMusicUri = reader.IsDBNull(6) ? null : reader.GetString(6),
+                    OccurrenceCount = reader.GetInt32(7)
+                });
+            }
+
+            return recommendations;
+        }
+
         public void ClearAllData()
         {
             using var connection = new SqliteConnection(_connectionString);
@@ -268,6 +326,163 @@ namespace Music
             command.ExecuteNonQuery();
 
             Logger.Log("All data cleared from database", ConsoleColor.Yellow);
+        }
+
+        public List<RecognizedTrack> GetTracksWithMinRecognitions(int minCount)
+        {
+            var list = new List<RecognizedTrack>();
+            using var connection = new SqliteConnection(_connectionString);
+            connection.Open();
+            var command = connection.CreateCommand();
+            command.CommandText = @"
+                SELECT Id, Title, Artist, CoverArtUrl
+                FROM History
+                WHERE RecognitionCount >= $min
+                ORDER BY RecognitionCount DESC;
+            ";
+            command.Parameters.AddWithValue("$min", minCount);
+            using var reader = command.ExecuteReader();
+            while (reader.Read())
+            {
+                list.Add(new RecognizedTrack
+                {
+                    Id          = reader.GetString(0),
+                    Title       = reader.GetString(1),
+                    Artist      = reader.GetString(2),
+                    CoverArtUrl = reader.IsDBNull(3) ? null : reader.GetString(3)
+                });
+            }
+            return list;
+        }
+
+        public int DeleteSingleRecognitionTracks()
+        {
+            using var connection = new SqliteConnection(_connectionString);
+            connection.Open();
+            using var transaction = connection.BeginTransaction();
+            try
+            {
+                foreach (var sql in new[]
+                {
+                    "DELETE FROM TrackRecommendations WHERE TrackId IN (SELECT Id FROM History WHERE RecognitionCount <= 2);",
+                    "DELETE FROM Downloads          WHERE TrackId IN (SELECT Id FROM History WHERE RecognitionCount <= 2);",
+                })
+                {
+                    var cmd = connection.CreateCommand();
+                    cmd.CommandText = sql;
+                    cmd.ExecuteNonQuery();
+                }
+
+                var delCmd = connection.CreateCommand();
+                delCmd.CommandText = "DELETE FROM History WHERE RecognitionCount <= 2;";
+                int removed = delCmd.ExecuteNonQuery();
+
+                transaction.Commit();
+                Logger.Log($"Removed {removed} track(s) with only 1-2 recognition", ConsoleColor.Yellow);
+                return removed;
+            }
+            catch { transaction.Rollback(); throw; }
+        }
+
+        public void DeleteTrack(string trackId)
+        {
+            using var connection = new SqliteConnection(_connectionString);
+            connection.Open();
+            using var transaction = connection.BeginTransaction();
+            try
+            {
+                foreach (var sql in new[]
+                {
+                    "DELETE FROM TrackRecommendations WHERE TrackId = $id;",
+                    "DELETE FROM Downloads WHERE TrackId = $id;",
+                    "DELETE FROM History WHERE Id = $id;"
+                })
+                {
+                    var cmd = connection.CreateCommand();
+                    cmd.CommandText = sql;
+                    cmd.Parameters.AddWithValue("$id", trackId);
+                    cmd.ExecuteNonQuery();
+                }
+                transaction.Commit();
+            }
+            catch { transaction.Rollback(); throw; }
+        }
+
+        public bool IsTrackDownloaded(string trackId)
+        {
+            using var connection = new SqliteConnection(_connectionString);
+            connection.Open();
+            var command = connection.CreateCommand();
+            command.CommandText = "SELECT 1 FROM Downloads WHERE TrackId = $id;";
+            command.Parameters.AddWithValue("$id", trackId);
+            return command.ExecuteScalar() != null;
+        }
+
+        public void SaveDownload(DownloadedTrack track)
+        {
+            using var connection = new SqliteConnection(_connectionString);
+            connection.Open();
+            var command = connection.CreateCommand();
+            command.CommandText = @"
+                INSERT OR IGNORE INTO Downloads (TrackId, Title, Artist, CoverArtUrl, Status, Progress, FilePath, QueuedAt, CompletedAt, ErrorMessage)
+                VALUES ($id, $title, $artist, $cover, $status, $progress, $file, $queued, $completed, $error);
+            ";
+            command.Parameters.AddWithValue("$id", track.TrackId);
+            command.Parameters.AddWithValue("$title", track.Title);
+            command.Parameters.AddWithValue("$artist", track.Artist);
+            command.Parameters.AddWithValue("$cover", (object?)track.CoverArtUrl ?? DBNull.Value);
+            command.Parameters.AddWithValue("$status", track.Status.ToString());
+            command.Parameters.AddWithValue("$progress", track.Progress);
+            command.Parameters.AddWithValue("$file", (object?)track.FilePath ?? DBNull.Value);
+            command.Parameters.AddWithValue("$queued", track.QueuedAt.ToString("o"));
+            command.Parameters.AddWithValue("$completed", track.CompletedAt.HasValue ? (object)track.CompletedAt.Value.ToString("o") : DBNull.Value);
+            command.Parameters.AddWithValue("$error", (object?)track.ErrorMessage ?? DBNull.Value);
+            command.ExecuteNonQuery();
+        }
+
+        public void UpdateDownload(DownloadedTrack track)
+        {
+            using var connection = new SqliteConnection(_connectionString);
+            connection.Open();
+            var command = connection.CreateCommand();
+            command.CommandText = @"
+                UPDATE Downloads SET Status=$status, Progress=$progress, FilePath=$file, CompletedAt=$completed, ErrorMessage=$error
+                WHERE TrackId=$id;
+            ";
+            command.Parameters.AddWithValue("$status", track.Status.ToString());
+            command.Parameters.AddWithValue("$progress", track.Progress);
+            command.Parameters.AddWithValue("$file", (object?)track.FilePath ?? DBNull.Value);
+            command.Parameters.AddWithValue("$completed", track.CompletedAt.HasValue ? (object)track.CompletedAt.Value.ToString("o") : DBNull.Value);
+            command.Parameters.AddWithValue("$error", (object?)track.ErrorMessage ?? DBNull.Value);
+            command.Parameters.AddWithValue("$id", track.TrackId);
+            command.ExecuteNonQuery();
+        }
+
+        public List<DownloadedTrack> GetDownloads()
+        {
+            var list = new List<DownloadedTrack>();
+            using var connection = new SqliteConnection(_connectionString);
+            connection.Open();
+            var command = connection.CreateCommand();
+            command.CommandText = "SELECT TrackId,Title,Artist,CoverArtUrl,Status,Progress,FilePath,QueuedAt,CompletedAt,ErrorMessage FROM Downloads ORDER BY QueuedAt DESC;";
+            using var reader = command.ExecuteReader();
+            while (reader.Read())
+            {
+                list.Add(new DownloadedTrack
+                {
+                    TrackId      = reader.GetString(0),
+                    Title        = reader.GetString(1),
+                    Artist       = reader.GetString(2),
+                    CoverArtUrl  = reader.IsDBNull(3) ? null : reader.GetString(3),
+                    Status       = Enum.Parse<DownloadStatus>(reader.GetString(4)),
+                    Progress     = reader.GetDouble(5),
+                    FilePath     = reader.IsDBNull(6) ? null : reader.GetString(6),
+                    QueuedAt     = DateTime.Parse(reader.GetString(7)),
+                    CompletedAt  = reader.IsDBNull(8) ? null : DateTime.Parse(reader.GetString(8)),
+                    ErrorMessage = reader.IsDBNull(9) ? null : reader.GetString(9)
+                });
+            }
+            return list;
         }
 
         public AppSettings GetSettings()
@@ -309,6 +524,9 @@ namespace Music
                     case "MaxHistoryItems":
                         settings.MaxHistoryItems = int.Parse(value);
                         break;
+                    case "MaxConcurrentDownloads":
+                        settings.MaxConcurrentDownloads = int.Parse(value);
+                        break;
                 }
             }
 
@@ -343,7 +561,8 @@ namespace Music
                 SaveSetting("VisualizerFps", settings.VisualizerFps.ToString());
                 SaveSetting("EnableDiscordRichPresence", settings.EnableDiscordRichPresence.ToString());
                 SaveSetting("SaveHistory", settings.SaveHistory.ToString());
-                SaveSetting("MaxHistoryItems", settings.MaxHistoryItems.ToString());
+                SaveSetting("MaxHistoryItems",         settings.MaxHistoryItems.ToString());
+                SaveSetting("MaxConcurrentDownloads", settings.MaxConcurrentDownloads.ToString());
 
                 transaction.Commit();
             }
@@ -355,4 +574,5 @@ namespace Music
         }
     }
 }
+
 

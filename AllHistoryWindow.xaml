@@ -1,0 +1,389 @@
+<Window
+    x:Class="Music.AllHistoryWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:Music"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    Title="Histórico Completo — Music Recognizer"
+    Width="1060"
+    Height="760"
+    MinWidth="800"
+    MinHeight="560"
+    Background="#111111"
+    WindowStartupLocation="CenterOwner"
+    mc:Ignorable="d">
+
+    <Window.Resources>
+        <BooleanToVisibilityConverter x:Key="BoolToVis" />
+
+        <Style TargetType="TextBlock">
+            <Setter Property="Foreground" Value="#F9FAFB" />
+        </Style>
+
+        <!-- Ghost button -->
+        <Style x:Key="GhostBtn" TargetType="Button">
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="Foreground" Value="#9CA3AF" />
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="Padding" Value="14,8" />
+            <Setter Property="FontSize" Value="13" />
+            <Setter Property="Cursor" Value="Hand" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}" CornerRadius="8" Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="#2C2C2E" />
+                    <Setter Property="Foreground" Value="White" />
+                </Trigger>
+                <Trigger Property="IsEnabled" Value="False">
+                    <Setter Property="Opacity" Value="0.35" />
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <!-- Sort button (inactive) -->
+        <Style x:Key="SortBtn" TargetType="Button">
+            <Setter Property="Background" Value="#1C1C1E" />
+            <Setter Property="Foreground" Value="#9CA3AF" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="BorderBrush" Value="#2C2C2E" />
+            <Setter Property="Padding" Value="16,8" />
+            <Setter Property="FontSize" Value="13" />
+            <Setter Property="Cursor" Value="Hand" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border
+                            Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            CornerRadius="8"
+                            Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="#2C2C2E" />
+                    <Setter Property="Foreground" Value="White" />
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <!-- Sort button (active/selected) -->
+        <Style x:Key="SortBtnActive" TargetType="Button">
+            <Setter Property="Background" Value="#312E81" />
+            <Setter Property="Foreground" Value="#A5B4FC" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="BorderBrush" Value="#6366F1" />
+            <Setter Property="Padding" Value="16,8" />
+            <Setter Property="FontSize" Value="13" />
+            <Setter Property="Cursor" Value="Hand" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border
+                            Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            CornerRadius="8"
+                            Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="#3730A3" />
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <!-- Page nav button -->
+        <Style x:Key="PageBtn" TargetType="Button">
+            <Setter Property="Background" Value="#1C1C1E" />
+            <Setter Property="Foreground" Value="#9CA3AF" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="BorderBrush" Value="#2C2C2E" />
+            <Setter Property="Padding" Value="16,8" />
+            <Setter Property="FontSize" Value="13" />
+            <Setter Property="Cursor" Value="Hand" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border
+                            Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            CornerRadius="8"
+                            Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="#2C2C2E" />
+                    <Setter Property="Foreground" Value="White" />
+                </Trigger>
+                <Trigger Property="IsEnabled" Value="False">
+                    <Setter Property="Opacity" Value="0.3" />
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <!-- Compact history row -->
+        <DataTemplate x:Key="CompactRowTemplate">
+            <Border
+                CornerRadius="10"
+                Margin="0,3"
+                Cursor="Hand"
+                MouseDown="MusicCard_MouseDown"
+                Tag="{Binding}">
+                <Border.Style>
+                    <Style TargetType="Border">
+                        <Setter Property="Background" Value="#1C1C1E" />
+                        <Style.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="#2A2A2D" />
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+                </Border.Style>
+
+                <Grid Margin="14,11">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="52" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+
+                    <!-- Cover + play overlay -->
+                    <Border Grid.Column="0" CornerRadius="8" ClipToBounds="True" Width="52" Height="52" Background="#2C2C2E">
+                        <Grid>
+                            <Image Source="{Binding CoverArtUrl, Converter={x:Static local:CoverArtConverter.Instance}}" Stretch="UniformToFill" RenderOptions.BitmapScalingMode="HighQuality" />
+                            <Border
+                                Width="26" Height="26"
+                                CornerRadius="13"
+                                Background="White"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                Cursor="Hand"
+                                MouseDown="PlayCard_MouseDown"
+                                Tag="{Binding}">
+                                <Border.Style>
+                                    <Style TargetType="Border">
+                                        <Setter Property="Visibility" Value="Collapsed" />
+                                        <Setter Property="Opacity" Value="0.88" />
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding IsDownloaded}" Value="True">
+                                                <Setter Property="Visibility" Value="Visible" />
+                                            </DataTrigger>
+                                            <Trigger Property="IsMouseOver" Value="True">
+                                                <Setter Property="Opacity" Value="1" />
+                                            </Trigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Border.Style>
+                                <TextBlock
+                                    Text="▶"
+                                    FontSize="9"
+                                    Foreground="#111111"
+                                    HorizontalAlignment="Center"
+                                    VerticalAlignment="Center"
+                                    Margin="2,0,0,0" />
+                            </Border>
+                        </Grid>
+                    </Border>
+
+                    <!-- Title + artist -->
+                    <StackPanel Grid.Column="1" Margin="14,0,10,0" VerticalAlignment="Center">
+                        <TextBlock Text="{Binding Title}" FontSize="14" FontWeight="SemiBold" TextTrimming="CharacterEllipsis" />
+                        <TextBlock Text="{Binding Artist}" FontSize="12" Foreground="#9CA3AF" Margin="0,3,0,0" TextTrimming="CharacterEllipsis" />
+                    </StackPanel>
+
+                    <!-- Meta badges -->
+                    <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center">
+                        <!-- Downloaded -->
+                        <Border CornerRadius="5" Padding="8,4" Margin="0,0,6,0" Background="#14532D">
+                            <Border.Style>
+                                <Style TargetType="Border">
+                                    <Setter Property="Visibility" Value="Collapsed" />
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding IsDownloaded}" Value="True">
+                                            <Setter Property="Visibility" Value="Visible" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Border.Style>
+                            <TextBlock Text="✓ No PC" FontSize="10" Foreground="#86EFAC" FontWeight="SemiBold" />
+                        </Border>
+
+                        <!-- Downloading -->
+                        <Border CornerRadius="5" Padding="8,4" Margin="0,0,6,0" Background="#78350F">
+                            <Border.Style>
+                                <Style TargetType="Border">
+                                    <Setter Property="Visibility" Value="Collapsed" />
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding IsDownloading}" Value="True">
+                                            <Setter Property="Visibility" Value="Visible" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Border.Style>
+                            <TextBlock Text="{Binding DownloadStatusText}" FontSize="10" Foreground="#FDE68A" />
+                        </Border>
+
+                        <!-- Queued -->
+                        <Border CornerRadius="5" Padding="8,4" Margin="0,0,6,0" Background="#1E3A5F">
+                            <Border.Style>
+                                <Style TargetType="Border">
+                                    <Setter Property="Visibility" Value="Collapsed" />
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding IsQueued}" Value="True">
+                                            <Setter Property="Visibility" Value="Visible" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Border.Style>
+                            <TextBlock Text="Na fila" FontSize="10" Foreground="#93C5FD" />
+                        </Border>
+
+                        <!-- Count -->
+                        <Border Background="#1F2937" CornerRadius="5" Padding="8,4" Margin="0,0,10,0">
+                            <TextBlock Text="{Binding RecognitionCount, StringFormat='{}{0}×'}" FontSize="11" Foreground="#9CA3AF" />
+                        </Border>
+
+                        <!-- Date -->
+                        <TextBlock
+                            Text="{Binding LastRecognizedAt, StringFormat='dd/MM  HH:mm'}"
+                            FontSize="11"
+                            Foreground="#6B7280"
+                            VerticalAlignment="Center"
+                            Width="90" />
+                    </StackPanel>
+                </Grid>
+            </Border>
+        </DataTemplate>
+    </Window.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <!-- ══ Header ══ -->
+        <Border
+            Grid.Row="0"
+            Background="#161618"
+            BorderBrush="#2C2C2E"
+            BorderThickness="0,0,0,1"
+            Padding="24,16">
+            <Grid>
+                <StackPanel VerticalAlignment="Center">
+                    <TextBlock Text="Histórico Completo" FontSize="22" FontWeight="Bold" />
+                    <TextBlock x:Name="SubtitleText" FontSize="12" Foreground="#6B7280" Margin="0,3,0,0" />
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <!-- ══ Sort bar ══ -->
+        <Border
+            Grid.Row="1"
+            Background="#161618"
+            BorderBrush="#2C2C2E"
+            BorderThickness="0,0,0,1"
+            Padding="24,12">
+            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                <TextBlock
+                    Text="Ordenar por:"
+                    FontSize="13"
+                    Foreground="#6B7280"
+                    VerticalAlignment="Center"
+                    Margin="0,0,14,0" />
+
+                <!-- Date buttons -->
+                <Button x:Name="SortDateDescBtn"
+                        Content="Data ↓"
+                        Style="{StaticResource SortBtnActive}"
+                        Click="SortDateDesc_Click"
+                        Margin="0,0,6,0" />
+                <Button x:Name="SortDateAscBtn"
+                        Content="Data ↑"
+                        Style="{StaticResource SortBtn}"
+                        Click="SortDateAsc_Click"
+                        Margin="0,0,18,0" />
+
+                <!-- Recognition count buttons -->
+                <Button x:Name="SortCountDescBtn"
+                        Content="Reconhecimentos ↓"
+                        Style="{StaticResource SortBtn}"
+                        Click="SortCountDesc_Click"
+                        Margin="0,0,6,0" />
+                <Button x:Name="SortCountAscBtn"
+                        Content="Reconhecimentos ↑"
+                        Style="{StaticResource SortBtn}"
+                        Click="SortCountAsc_Click"
+                        Margin="0,0,18,0" />
+
+                <!-- Alphabetical buttons -->
+                <Button x:Name="SortNameAscBtn"
+                        Content="A → Z"
+                        Style="{StaticResource SortBtn}"
+                        Click="SortNameAsc_Click"
+                        Margin="0,0,6,0" />
+                <Button x:Name="SortNameDescBtn"
+                        Content="Z → A"
+                        Style="{StaticResource SortBtn}"
+                        Click="SortNameDesc_Click" />
+            </StackPanel>
+        </Border>
+
+        <!-- ══ List ══ -->
+        <ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+            <StackPanel Margin="24,16,24,8">
+                <ItemsControl x:Name="HistoryList" ItemTemplate="{StaticResource CompactRowTemplate}" />
+
+                <TextBlock
+                    x:Name="EmptyText"
+                    Text="Nenhuma música reconhecida ainda."
+                    FontSize="14"
+                    Foreground="#6B7280"
+                    HorizontalAlignment="Center"
+                    Margin="0,40,0,0"
+                    Visibility="Collapsed" />
+            </StackPanel>
+        </ScrollViewer>
+
+        <!-- ══ Pagination ══ -->
+        <Border Grid.Row="3" Background="#161618" BorderBrush="#2C2C2E" BorderThickness="0,1,0,0" Padding="24,12">
+            <Grid>
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+                    <Button x:Name="PrevPageBtn" Content="← Anterior" Click="PrevPage_Click" Style="{StaticResource PageBtn}" />
+                    <TextBlock
+                        x:Name="PageInfoText"
+                        VerticalAlignment="Center"
+                        Margin="18,0"
+                        FontSize="13"
+                        Foreground="#9CA3AF" />
+                    <Button x:Name="NextPageBtn" Content="Próxima →" Click="NextPage_Click" Style="{StaticResource PageBtn}" />
+                </StackPanel>
+            </Grid>
+        </Border>
+    </Grid>
+</Window>

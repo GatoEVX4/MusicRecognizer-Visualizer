@@ -99,6 +99,44 @@
                 <TextBlock Margin="0,10,0,5" Text="Máximo de itens no histórico:" />
                 <TextBox x:Name="MaxHistoryTextBox" Text="1000" />
 
+                <!--  Downloads  -->
+                <TextBlock
+                    Margin="0,20,0,0"
+                    FontSize="16"
+                    FontWeight="SemiBold"
+                    Text="Downloads" />
+                <Separator Margin="0,5,0,10" Background="#3F3F46" />
+
+                <TextBlock Margin="0,5,0,8" Text="Downloads simultâneos (instâncias de yt-dlp):" />
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="40" />
+                    </Grid.ColumnDefinitions>
+                    <Slider
+                        x:Name="ConcurrentDownloadsSlider"
+                        Grid.Column="0"
+                        Minimum="1"
+                        Maximum="10"
+                        TickFrequency="1"
+                        IsSnapToTickEnabled="True"
+                        SmallChange="1"
+                        LargeChange="1"
+                        Value="2"
+                        VerticalAlignment="Center"
+                        ValueChanged="ConcurrentDownloadsSlider_ValueChanged" />
+                    <TextBlock
+                        x:Name="ConcurrentDownloadsLabel"
+                        Grid.Column="1"
+                        Text="2"
+                        FontSize="15"
+                        FontWeight="SemiBold"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center" />
+                </Grid>
+                <TextBlock Margin="0,5,0,0" FontSize="11" Foreground="#999999"
+                           Text="Cada instância abre um processo yt-dlp separado. Valores altos podem saturar a rede." />
+
                 <!--  Integrações  -->
                 <TextBlock
                     Margin="0,20,0,0"
@@ -138,6 +176,7 @@
         </StackPanel>
     </Grid>
 </Window>
+
 
 
 
