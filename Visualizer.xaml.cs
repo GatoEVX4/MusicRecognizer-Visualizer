@@ -1,21 +1,21 @@
 ﻿using MathNet.Numerics.IntegralTransforms;
-using NAudio.Wave;
 using System.Numerics;
+using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Shapes;
 namespace Music
 {
     public partial class Visualizer : UserControl
     {
-        private WasapiLoopbackCapture capture = new WasapiLoopbackCapture();
+        private LoopbackCapture capture = new LoopbackCapture();
         private readonly Queue<Complex[]> smooth;
         private DateTime _lastDraw = DateTime.MinValue;
         private readonly List<Rectangle> _bars = new List<Rectangle>();
         private Complex[] fftBuffer = new Complex[4096];
         private const double FrequencyCutoff = 0.20;
+
 
         private TimeSpan _frameInterval;
         private int VerticalSmoothness;
@@ -71,31 +71,18 @@ namespace Music
                 _bars.Add(rect);
             }
         }
-        private void OnDataAvailable(object sender, WaveInEventArgs e)
+        private void OnDataAvailable(byte[] buffer, int bytesRecorded)
         {
             if (DateTime.Now - _lastDraw < _frameInterval)
                 return;
 
-            var buffer = new WaveBuffer(e.Buffer);
-            int len = Math.Min(buffer.FloatBuffer.Length / 8, fftBuffer.Length);
+            var floats = MemoryMarshal.Cast<byte, float>(buffer.AsSpan(0, bytesRecorded));
+            int len = Math.Min(floats.Length / 8, fftBuffer.Length);
 
             for (int i = 0; i < len; i++)
-                fftBuffer[i] = new Complex(buffer.FloatBuffer[i], 0);
+                fftBuffer[i] = new Complex(floats[i], 0);
 
             Fourier.Forward(fftBuffer, FourierOptions.Default);
-
-            int maxFreqIndex = (int)(len * FrequencyCutoff);
-            double[] barMagnitudes = new double[BarCount];
-            int step = maxFreqIndex / BarCount;
-
-            for (int i = 0; i < BarCount; i++)
-            {
-                double sum = 0;
-                for (int j = i * step; j < (i + 1) * step; j++)
-                    sum += fftBuffer[j].Magnitude;
-
-                barMagnitudes[i] = sum / step;
-            }
 
             _lastDraw = DateTime.Now;
 
@@ -133,7 +120,7 @@ namespace Music
             for (int i = 0; i < BarCount; i++)
             {
                 var rect = _bars[i];
-                rect.Height = canvasHeight * (BothSmooth(i) * mutiplier);
+                rect.Height = canvasHeight * BothSmooth(i);
                 rect.Width = Math.Max(barWidth - 5, 0);
             }
         }
