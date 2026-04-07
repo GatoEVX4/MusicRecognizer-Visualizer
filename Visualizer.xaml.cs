@@ -62,8 +62,8 @@ namespace Music
                 var rect = new Rectangle
                 {
                     Width = ActualWidth / BarCount,
-                    RadiusX = 2,
-                    RadiusY = 2,
+                    //RadiusX = 2,
+                    //RadiusY = 2,
                     VerticalAlignment = VerticalAlignment.Bottom,
                     Fill = brush
                 };
@@ -124,7 +124,7 @@ namespace Music
             return value / ((HorizontalSmoothness + 1) * 1.8);
         }
 
-        private int mutiplier = 1;
+        private const double mutiplier = 1.5;
         private void DrawVisualizer()
         {
             double canvasHeight = SpectrumStack.ActualHeight;
@@ -133,7 +133,7 @@ namespace Music
             for (int i = 0; i < BarCount; i++)
             {
                 var rect = _bars[i];
-                rect.Height = Math.Max(barWidth, canvasHeight * (0.1 + BothSmooth(i) * mutiplier));
+                rect.Height = canvasHeight * (BothSmooth(i) * mutiplier);
                 rect.Width = Math.Max(barWidth - 5, 0);
             }
         }
