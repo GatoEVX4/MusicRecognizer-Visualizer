@@ -46,8 +46,8 @@ namespace Music
         {
             InitializeComponent();
 
-            stackpa.Margin = new Thickness(10, 0, 10, 0);
-            Visualizer.Margin = new Thickness(10, 0, 10, 0);
+            stackpa.Margin = new Thickness(6, 0, 10, 0);
+            Visualizer.Margin = new Thickness(6, 0, 10, 0);
 
             while (true)
             {
@@ -305,8 +305,8 @@ namespace Music
                 MusicImgBackground.Source = null;
                 MusicImageGlow.Background = null;
 
-                stackpa.Margin = new Thickness(10, 0, 10, 0);
-                Visualizer.Margin = new Thickness(10, 0, 10, 0);
+                stackpa.Margin = new Thickness(6, 0, 10, 0);
+                Visualizer.Margin = new Thickness(6, 0, 10, 0);
                 return;
             }
 
@@ -318,8 +318,8 @@ namespace Music
             MusicImgBackground.Source = bitmap;
             MusicImageGlow.Background = brush;
 
-            stackpa.Margin = new Thickness(50, 0, 10, 0);
-            Visualizer.Margin = new Thickness(50, 0, 10, 0);
+            stackpa.Margin = new Thickness(43, 0, 10, 0);
+            Visualizer.Margin = new Thickness(43, 0, 10, 0);
         }
 
         public static bool IsColorLight(Color color)

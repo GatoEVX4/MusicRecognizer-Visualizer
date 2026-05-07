@@ -134,7 +134,7 @@ namespace Music
             {
                 var rect = _bars[i];
                 rect.Height = canvasHeight * (BothSmooth(i) * mutiplier);
-                rect.Width = Math.Max(barWidth - 5, 0);
+                rect.Width = Math.Max(barWidth - 4, 0);
             }
         }
     }

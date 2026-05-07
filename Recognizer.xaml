@@ -5,7 +5,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="clr-namespace:Music"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    d:DesignHeight="80"
+    d:DesignHeight="42"
     d:DesignWidth="300"
     mc:Ignorable="d">
     <Border
@@ -43,12 +43,15 @@
 
             <local:Visualizer x:Name="Visualizer" Margin="55,-5,0,-5" />
 
-            <Grid x:Name="InfoBar" HorizontalAlignment="Stretch" IsHitTestVisible="False">
+            <Grid
+                x:Name="InfoBar"
+                HorizontalAlignment="Stretch"
+                IsHitTestVisible="False">
                 <Grid
                     Width="30"
-                    Margin="10,0,0,0"
+                    Margin="6,0,0,0"
                     HorizontalAlignment="Left"
-                    VerticalAlignment="Center">
+                    VerticalAlignment="Center" Height="30">
                     <Border
                         x:Name="MusicImageGlow"
                         Margin="-5"
@@ -103,7 +106,7 @@
 
                     <StackPanel
                         x:Name="stackpa"
-                        Margin="55,0,0,0"
+                        Margin="43,0,0,0"
                         VerticalAlignment="Center">
 
 
