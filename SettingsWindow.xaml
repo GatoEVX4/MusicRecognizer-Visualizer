@@ -148,8 +148,7 @@
                     <TextBox
                         x:Name="DownloadDirTextBox"
                         Width="380"
-                        HorizontalAlignment="Right"
-                        TextAlignment="Right" />
+                        HorizontalAlignment="Right" />
                 </Grid>
 
                 <Grid>
