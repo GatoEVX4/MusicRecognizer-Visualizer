@@ -119,7 +119,7 @@ namespace Music
 
             EmptyText.Visibility = sorted.Count == 0 ? Visibility.Visible : Visibility.Collapsed;
 
-            PageInfoText.Text      = $"Página {_page + 1} de {totalPages}";
+            PageInfoText.Text      = $"Page {_page + 1} of {totalPages}";
             PrevPageBtn.IsEnabled  = _page > 0;
             NextPageBtn.IsEnabled  = (_page + 1) < totalPages;
         }
@@ -139,8 +139,8 @@ namespace Music
         {
             var n = _allItems.Count;
             SubtitleText.Text = n > 0
-                ? $"{n} música{(n != 1 ? "s" : "")} no histórico"
-                : "Nenhuma música reconhecida ainda";
+                ? $"{n} song{(n != 1 ? "s" : "")} in history"
+                : "No music recognized yet";
         }
 
         // ── Card interactions ─────────────────────────────────────────────────
@@ -174,13 +174,13 @@ namespace Music
         {
             var menu = new ContextMenu();
 
-            var open = new MenuItem { Header = "Ver detalhes" };
+            var open = new MenuItem { Header = "View details" };
             open.Click += (_, _) => new TrackDetailWindow(item) { Owner = this }.ShowDialog();
             menu.Items.Add(open);
 
             menu.Items.Add(new Separator());
 
-            var del = new MenuItem { Header = "🗑  Excluir música" };
+            var del = new MenuItem { Header = "🗑  Delete music" };
             del.Click += (_, _) => ConfirmAndDelete(item);
             menu.Items.Add(del);
 
@@ -190,10 +190,10 @@ namespace Music
         private void ConfirmAndDelete(MusicItem item)
         {
             var msg = item.HasFile
-                ? $"Excluir \"{item.Title}\"?\n\nO registro do histórico e o arquivo de áudio serão removidos permanentemente."
-                : $"Excluir \"{item.Title}\" do histórico?";
+                ? $"Delete \"{item.Title}\"?\n\nThe history record and audio file will be permanently removed."
+                : $"Delete \"{item.Title}\" from history?";
 
-            if (MessageBox.Show(msg, "Confirmar exclusão", MessageBoxButton.YesNo, MessageBoxImage.Warning)
+            if (MessageBox.Show(msg, "Confirm deletion", MessageBoxButton.YesNo, MessageBoxImage.Warning)
                 == MessageBoxResult.Yes)
                 DataManager.Instance.DeleteMusicItem(item.Id);
         }

@@ -70,7 +70,7 @@ namespace Music
             MetaText.Visibility = parts.Any() ? Visibility.Visible : Visibility.Collapsed;
 
             var n = _track.RecognitionCount;
-            RecognitionText.Text = $"🎵  Reconhecida {n} {(n == 1 ? "vez" : "vezes")}";
+            RecognitionText.Text = $"🎵  Recognized {n} {(n == 1 ? "time" : "times")}";
             LastSeenText.Text    = $"🕐  {_track.LastRecognizedAt:dd/MM/yyyy  HH:mm}";
 
             UpdateDownloadStatus();
@@ -83,7 +83,7 @@ namespace Music
                 DownloadBadge.Background            = new SolidColorBrush(Color.FromRgb(20, 83, 45));
                 DownloadIcon.Text                   = "✓";
                 DownloadIcon.Foreground             = new SolidColorBrush(Color.FromRgb(134, 239, 172));
-                DownloadLabel.Text                  = _track.HasFile ? "No seu PC" : "Baixado (arquivo não encontrado)";
+                DownloadLabel.Text                  = _track.HasFile ? "On your PC" : "Downloaded (file not found)";
                 DownloadLabel.Foreground            = new SolidColorBrush(Color.FromRgb(134, 239, 172));
                 DownloadProgressBar.Visibility      = Visibility.Collapsed;
                 PlayBtn.IsEnabled                   = _track.HasFile;
@@ -94,7 +94,7 @@ namespace Music
                 DownloadBadge.Background            = new SolidColorBrush(Color.FromRgb(120, 53, 15));
                 DownloadIcon.Text                   = "⬇";
                 DownloadIcon.Foreground             = new SolidColorBrush(Color.FromRgb(253, 230, 138));
-                DownloadLabel.Text                  = $"Baixando... {_track.DownloadProgress:F0}%";
+                DownloadLabel.Text                  = $"Downloading... {_track.DownloadProgress:F0}%";
                 DownloadLabel.Foreground            = new SolidColorBrush(Color.FromRgb(253, 230, 138));
                 DownloadProgressBar.Value           = _track.DownloadProgress;
                 DownloadProgressBar.Visibility      = Visibility.Visible;
@@ -106,7 +106,7 @@ namespace Music
                 DownloadBadge.Background            = new SolidColorBrush(Color.FromRgb(30, 58, 95));
                 DownloadIcon.Text                   = "⏳";
                 DownloadIcon.Foreground             = new SolidColorBrush(Color.FromRgb(147, 197, 253));
-                DownloadLabel.Text                  = "Na fila para download";
+                DownloadLabel.Text                  = "Queued for download";
                 DownloadLabel.Foreground            = new SolidColorBrush(Color.FromRgb(147, 197, 253));
                 DownloadProgressBar.Visibility      = Visibility.Collapsed;
                 PlayBtn.IsEnabled                   = false;
@@ -120,8 +120,8 @@ namespace Music
                 DownloadIcon.Foreground             = new SolidColorBrush(Color.FromRgb(107, 114, 128));
                 var remaining = Math.Max(0, 20 - _track.RecognitionCount);
                 DownloadLabel.Text                  = remaining > 0
-                    ? $"Faltam {remaining} reconhecimento{(remaining == 1 ? "" : "s")} para download automático"
-                    : "Aguardando fila de download";
+                    ? $"Missing {remaining} recognition{(remaining == 1 ? "" : "s")} for auto download"
+                    : "Waiting for download queue";
                 DownloadLabel.Foreground            = new SolidColorBrush(Color.FromRgb(107, 114, 128));
                 DownloadProgressBar.Visibility      = Visibility.Collapsed;
                 PlayBtn.IsEnabled                   = false;
@@ -193,10 +193,10 @@ namespace Music
         private void DeleteBtn_Click(object sender, RoutedEventArgs e)
         {
             var msg = _track.HasFile
-                ? $"Excluir \"{_track.Title}\"?\n\nO registro do histórico e o arquivo de áudio serão removidos permanentemente."
-                : $"Excluir \"{_track.Title}\" do histórico?";
+                ? $"Delete \"{_track.Title}\"?\n\nThe history record and audio file will be permanently removed."
+                : $"Delete \"{_track.Title}\" from history?";
 
-            if (MessageBox.Show(msg, "Confirmar exclusão", MessageBoxButton.YesNo, MessageBoxImage.Warning)
+            if (MessageBox.Show(msg, "Confirm deletion", MessageBoxButton.YesNo, MessageBoxImage.Warning)
                 == MessageBoxResult.Yes)
             {
                 DataManager.Instance.DeleteMusicItem(_track.Id);
@@ -228,14 +228,14 @@ namespace Music
                 }
 
                 if (!string.IsNullOrEmpty(track.ShazamUrl))
-                    AddItem("🔍  Abrir no Shazam",      () => OpenUrl(track.ShazamUrl));
+                    AddItem("🔍  Open on Shazam",      () => OpenUrl(track.ShazamUrl));
                 if (!string.IsNullOrEmpty(track.SpotifySearchUri))
-                    AddItem("🎧  Abrir no Spotify",     () => OpenUrl(track.SpotifySearchUri));
+                    AddItem("🎧  Open on Spotify",     () => OpenUrl(track.SpotifySearchUri));
                 if (!string.IsNullOrEmpty(track.AppleMusicUri))
-                    AddItem("🍎  Abrir no Apple Music", () => OpenUrl(track.AppleMusicUri));
+                    AddItem("🍎  Open on Apple Music", () => OpenUrl(track.AppleMusicUri));
 
                 var q = Uri.EscapeDataString($"{track.Artist} {track.Title}");
-                AddItem("▶  Buscar no YouTube", () => OpenUrl($"https://www.youtube.com/results?search_query={q}"));
+                AddItem("▶  Search on YouTube", () => OpenUrl($"https://www.youtube.com/results?search_query={q}"));
 
                 menu.IsOpen = true;
             }

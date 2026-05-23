@@ -5,7 +5,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="clr-namespace:Music"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    Title="Suas Músicas — Music Recognizer"
+    Title="Your Music — Music Recognizer"
     Width="1060"
     Height="760"
     MinWidth="800"
@@ -697,7 +697,7 @@
             Padding="24,16">
             <Grid>
                 <StackPanel VerticalAlignment="Center">
-                    <TextBlock Text="Suas Músicas" FontSize="22" FontWeight="Bold" />
+                    <TextBlock Text="Your Music" FontSize="22" FontWeight="Bold" />
                     <TextBlock x:Name="SubtitleText" FontSize="12" Foreground="#6B7280" Margin="0,3,0,0" />
                 </StackPanel>
 
@@ -707,7 +707,7 @@
                         <Grid>
                             <TextBlock
                                 x:Name="SearchPlaceholder"
-                                Text="🔍  Buscar músicas ou artistas..."
+                                Text="🔍  Search songs or artists..."
                                 Foreground="#6B7280"
                                 FontSize="13"
                                 VerticalAlignment="Center"
@@ -769,23 +769,23 @@
 
                         <TextBlock
                             x:Name="TrendingEmpty"
-                            Text="Nenhuma música ouvida nos últimos 30 dias."
+                            Text="No music listened in the last 30 days."
                             FontSize="13"
                             Foreground="#6B7280"
                             Margin="4,8,0,0"
                             Visibility="Collapsed" />
                     </StackPanel>
 
-                    <!-- ● Para Você Agora -->
+                    <!-- ● For You Now -->
                     <StackPanel x:Name="ForYouSection" Margin="24,30,24,0">
                         <Grid Margin="0,0,0,14">
                             <StackPanel>
                                 <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                                     <Border Width="4" Height="22" Background="#8B5CF6" CornerRadius="2" Margin="0,0,10,0" />
-                                    <TextBlock Text="Para Você Agora" FontSize="19" FontWeight="Bold" VerticalAlignment="Center" />
+                                    <TextBlock Text="For You Now" FontSize="19" FontWeight="Bold" VerticalAlignment="Center" />
                                 </StackPanel>
                                 <TextBlock
-                                    Text="Baseado no que você está ouvindo hoje"
+                                    Text="Based on what you're listening to today"
                                     FontSize="12"
                                     Foreground="#6B7280"
                                     Margin="14,5,0,0" />
@@ -807,23 +807,23 @@
 
                         <TextBlock
                             x:Name="ForYouEmpty"
-                            Text="Continue ouvindo músicas para receber recomendações personalizadas."
+                            Text="Keep listening to songs to get personalized recommendations."
                             FontSize="13"
                             Foreground="#6B7280"
                             Margin="4,8,0,0"
                             Visibility="Collapsed" />
                     </StackPanel>
 
-                    <!-- ● Tempo de Saudade -->
+                    <!-- ● Throwback Time -->
                     <StackPanel x:Name="SaudadeSection" Margin="24,30,24,0">
                         <Grid Margin="0,0,0,14">
                             <StackPanel>
                                 <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                                     <Border Width="4" Height="22" Background="#EC4899" CornerRadius="2" Margin="0,0,10,0" />
-                                    <TextBlock Text="Tempo de Saudade" FontSize="19" FontWeight="Bold" VerticalAlignment="Center" />
+                                    <TextBlock Text="Throwback Time" FontSize="19" FontWeight="Bold" VerticalAlignment="Center" />
                                 </StackPanel>
                                 <TextBlock
-                                    Text="Músicas que você curte mas faz tempo que não aparecem"
+                                    Text="Songs you like but haven't appeared in a while"
                                     FontSize="12"
                                     Foreground="#6B7280"
                                     Margin="14,5,0,0" />
@@ -845,7 +845,7 @@
 
                         <TextBlock
                             x:Name="SaudadeEmpty"
-                            Text="Nenhuma música encontrada nessa categoria ainda."
+                            Text="No songs found in this category yet."
                             FontSize="13"
                             Foreground="#6B7280"
                             Margin="4,8,0,0"
@@ -855,16 +855,16 @@
                     <!-- Divider -->
                     <Border Height="1" Background="#2C2C2E" Margin="24,30,24,0" />
 
-                    <!-- ● Histórico Recente -->
+                    <!-- ● Recent History -->
                     <StackPanel Margin="24,26,24,28">
                         <Grid Margin="0,0,0,14">
                             <StackPanel>
                                 <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                                     <Border Width="4" Height="22" Background="#10B981" CornerRadius="2" Margin="0,0,10,0" />
-                                    <TextBlock Text="Histórico Recente" FontSize="19" FontWeight="Bold" VerticalAlignment="Center" />
+                                    <TextBlock Text="Recent History" FontSize="19" FontWeight="Bold" VerticalAlignment="Center" />
                                 </StackPanel>
                                 <TextBlock
-                                    Text="Últimas músicas reconhecidas"
+                                    Text="Latest recognized songs"
                                     FontSize="12"
                                     Foreground="#6B7280"
                                     Margin="14,5,0,0" />
@@ -883,14 +883,14 @@
 
                         <TextBlock
                             x:Name="HistoryEmpty"
-                            Text="Nenhuma música reconhecida ainda. Comece a ouvir música!"
+                            Text="No music recognized yet. Start listening to music!"
                             FontSize="13"
                             Foreground="#6B7280"
                             Margin="4,12,0,0"
                             Visibility="Collapsed" />
                     </StackPanel>
 
-                <!-- ● Fila de Downloads -->
+                <!-- ● Download Queue -->
                 <StackPanel x:Name="DownloadQueueSection" Margin="24,0,24,28">
 
                     <!-- Divider -->
@@ -900,13 +900,13 @@
                         <StackPanel>
                             <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                                 <Border Width="4" Height="22" Background="#F59E0B" CornerRadius="2" Margin="0,0,10,0" />
-                                <TextBlock Text="Fila de Downloads" FontSize="19" FontWeight="Bold" VerticalAlignment="Center" />
+                                <TextBlock Text="Download Queue" FontSize="19" FontWeight="Bold" VerticalAlignment="Center" />
                                 <Border x:Name="DownloadQueueCountBadge" Background="#1C1C1E" CornerRadius="12" Padding="10,4" Margin="12,0,0,0" VerticalAlignment="Center">
                                     <TextBlock x:Name="DownloadQueueCountText" FontSize="12" Foreground="#F59E0B" FontWeight="SemiBold" />
                                 </Border>
                             </StackPanel>
                             <TextBlock
-                                Text="Músicas com 10+ reconhecimentos aguardando download via yt-dlp"
+                                Text="Songs with 10+ recognitions waiting to download via yt-dlp"
                                 FontSize="12"
                                 Foreground="#6B7280"
                                 Margin="14,5,0,0" />
@@ -945,12 +945,12 @@
                             Margin="18,0"
                             FontSize="13"
                             Foreground="#9CA3AF" />
-                        <Button x:Name="SearchNextBtn" Content="Próxima →" Click="SearchNext_Click" Style="{StaticResource PageBtn}" />
+                        <Button x:Name="SearchNextBtn" Content="Next →" Click="SearchNext_Click" Style="{StaticResource PageBtn}" />
                     </StackPanel>
 
                     <TextBlock
                         x:Name="SearchEmpty"
-                        Text="Nenhuma música encontrada para essa busca."
+                        Text="No songs found for this search."
                         FontSize="14"
                         Foreground="#6B7280"
                         HorizontalAlignment="Center"

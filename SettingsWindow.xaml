@@ -4,9 +4,8 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    Title="Configurações - Music Recognizer"
+    Title="Settings - Music Recognizer"
     Width="500"
-    Height="450"
     Background="#1E1E1E"
     ResizeMode="NoResize"
     WindowStartupLocation="CenterScreen"
@@ -55,48 +54,54 @@
             Grid.Row="0"
             FontSize="20"
             FontWeight="Bold"
-            Text="Configurações" />
+            Text="Settings" />
 
-        <ScrollViewer Grid.Row="1" Margin="0,20,0,20" VerticalScrollBarVisibility="Auto">
+        <ScrollViewer
+            Grid.Row="1"
+            Margin="0,20,0,20"
+            VerticalScrollBarVisibility="Auto">
             <StackPanel>
-                <!--  Reconhecimento  -->
+                <!--  Recognition  -->
                 <TextBlock
                     FontSize="16"
                     FontWeight="SemiBold"
-                    Text="Reconhecimento" />
+                    Text="Recognition" />
                 <Separator Margin="0,5,0,10" Background="#3F3F46" />
 
-                <TextBlock Margin="0,5,0,5" Text="Delay mínimo entre reconhecimentos (ms):" />
+                <TextBlock Margin="0,5,0,5" Text="Minimum delay between recognitions (ms):" />
                 <TextBox x:Name="DelayMinTextBox" Text="2200" />
 
-                <TextBlock Margin="0,10,0,5" Text="Delay máximo entre reconhecimentos (ms):" />
+                <TextBlock Margin="0,10,0,5" Text="Maximum delay between recognitions (ms):" />
                 <TextBox x:Name="DelayMaxTextBox" Text="5500" />
 
-                <!--  Visualizador  -->
+                <!--  Visualizer  -->
                 <TextBlock
                     Margin="0,20,0,0"
                     FontSize="16"
                     FontWeight="SemiBold"
-                    Text="Visualizador" />
+                    Text="Visualizer" />
                 <Separator Margin="0,5,0,10" Background="#3F3F46" />
 
-                <TextBlock Margin="0,5,0,5" Text="Número de barras:" />
+                <TextBlock Margin="0,5,0,5" Text="Number of bars:" />
                 <TextBox x:Name="VisualizerBarsTextBox" Text="32" />
 
-                <TextBlock Margin="0,10,0,5" Text="FPS do visualizador:" />
+                <TextBlock Margin="0,10,0,5" Text="Visualizer FPS:" />
                 <TextBox x:Name="VisualizerFpsTextBox" Text="60" />
 
-                <!--  Histórico  -->
+                <!--  History  -->
                 <TextBlock
                     Margin="0,20,0,0"
                     FontSize="16"
                     FontWeight="SemiBold"
-                    Text="Histórico" />
+                    Text="History" />
                 <Separator Margin="0,5,0,10" Background="#3F3F46" />
 
-                <CheckBox x:Name="SaveHistoryCheckBox" Content="Salvar histórico de músicas reconhecidas" IsChecked="True" />
+                <CheckBox
+                    x:Name="SaveHistoryCheckBox"
+                    Content="Save recognized music history"
+                    IsChecked="True" />
 
-                <TextBlock Margin="0,10,0,5" Text="Máximo de itens no histórico:" />
+                <TextBlock Margin="0,10,0,5" Text="Maximum history items:" />
                 <TextBox x:Name="MaxHistoryTextBox" Text="1000" />
 
                 <!--  Downloads  -->
@@ -107,7 +112,10 @@
                     Text="Downloads" />
                 <Separator Margin="0,5,0,10" Background="#3F3F46" />
 
-                <TextBlock Margin="0,5,0,8" Text="Downloads simultâneos (instâncias de yt-dlp):" />
+                <TextBlock Margin="0,10,0,5" Text="Download directory:" />
+                <TextBox x:Name="DownloadDirTextBox" />
+
+                <TextBlock Margin="0,5,0,8" Text="Simultaneous downloads (yt-dlp instances):" />
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*" />
@@ -116,43 +124,49 @@
                     <Slider
                         x:Name="ConcurrentDownloadsSlider"
                         Grid.Column="0"
-                        Minimum="1"
-                        Maximum="10"
-                        TickFrequency="1"
-                        IsSnapToTickEnabled="True"
-                        SmallChange="1"
-                        LargeChange="1"
-                        Value="2"
                         VerticalAlignment="Center"
-                        ValueChanged="ConcurrentDownloadsSlider_ValueChanged" />
+                        IsSnapToTickEnabled="True"
+                        LargeChange="1"
+                        Maximum="10"
+                        Minimum="1"
+                        SmallChange="1"
+                        TickFrequency="1"
+                        ValueChanged="ConcurrentDownloadsSlider_ValueChanged"
+                        Value="2" />
                     <TextBlock
                         x:Name="ConcurrentDownloadsLabel"
                         Grid.Column="1"
-                        Text="2"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
                         FontSize="15"
                         FontWeight="SemiBold"
-                        HorizontalAlignment="Center"
-                        VerticalAlignment="Center" />
+                        Text="2" />
                 </Grid>
-                <TextBlock Margin="0,5,0,0" FontSize="11" Foreground="#999999"
-                           Text="Cada instância abre um processo yt-dlp separado. Valores altos podem saturar a rede." />
+                <TextBlock
+                    Margin="0,5,0,0"
+                    FontSize="11"
+                    Foreground="#999999"
+                    Text="Each instance opens a separate yt-dlp process. High values may saturate your network." />
 
-                <!--  Integrações  -->
+                <!--  Integrations  -->
                 <TextBlock
                     Margin="0,20,0,0"
                     FontSize="16"
                     FontWeight="SemiBold"
-                    Text="Integrações" />
+                    Text="Integrations" />
                 <Separator Margin="0,5,0,10" Background="#3F3F46" />
 
-                <CheckBox x:Name="DiscordRpcCheckBox" Content="Ativar Discord Rich Presence" IsChecked="True" />
+                <CheckBox
+                    x:Name="DiscordRpcCheckBox"
+                    Content="Enable Discord Rich Presence"
+                    IsChecked="True" />
 
-                <!--  Dados  -->
+                <!--  Data  -->
                 <TextBlock
                     Margin="0,20,0,0"
                     FontSize="16"
                     FontWeight="SemiBold"
-                    Text="Dados" />
+                    Text="Data" />
                 <Separator Margin="0,5,0,10" Background="#3F3F46" />
 
                 <Button
@@ -161,18 +175,24 @@
                     HorizontalAlignment="Left"
                     Background="#D13438"
                     Click="ClearHistoryButton_Click"
-                    Content="Limpar histórico" />
+                    Content="Clear History" />
             </StackPanel>
         </ScrollViewer>
 
-        <StackPanel Grid.Row="2" HorizontalAlignment="Right" Orientation="Horizontal">
+        <StackPanel
+            Grid.Row="2"
+            HorizontalAlignment="Right"
+            Orientation="Horizontal">
             <Button
                 x:Name="CancelButton"
                 Margin="0,0,10,0"
                 Background="#3F3F46"
                 Click="CancelButton_Click"
-                Content="Cancelar" />
-            <Button x:Name="SaveButton" Click="SaveButton_Click" Content="Salvar" />
+                Content="Cancel" />
+            <Button
+                x:Name="SaveButton"
+                Click="SaveButton_Click"
+                Content="Save" />
         </StackPanel>
     </Grid>
 </Window>

@@ -220,10 +220,10 @@ namespace Music
                     lastresult = result;
                     Logger.Log($"Recognized: {result.Artist} {result.Title}", ConsoleColor.Green);
 
-                    // Adicionar ao histórico
+                    // Add to history
                     DataManager.Instance.AddToHistory(result);
 
-                    // Buscar recomendações se reconhecido 3 vezes
+                    // Fetch recommendations if recognized 3 times
                     var recognitionCount = DataManager.Instance.GetRecognitionCount(result.Id);
                     if (recognitionCount == 3)
                     {

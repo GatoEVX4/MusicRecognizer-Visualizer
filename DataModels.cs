@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.IO;
 using System.Windows.Media;
 
 namespace Music
@@ -49,10 +50,10 @@ namespace Music
 
         public string StatusText => Status switch
         {
-            DownloadStatus.Queued      => "Na fila",
-            DownloadStatus.Downloading => $"Baixando... {Progress:F0}%",
-            DownloadStatus.Completed   => "Concluído",
-            DownloadStatus.Failed      => "Falhou",
+            DownloadStatus.Queued      => "Queued",
+            DownloadStatus.Downloading => $"Downloading... {Progress:F0}%",
+            DownloadStatus.Completed   => "Completed",
+            DownloadStatus.Failed      => "Failed",
             _                          => ""
         };
     }
@@ -152,10 +153,10 @@ namespace Music
 
         public string DownloadStatusText => _downloadStatus switch
         {
-            Music.DownloadStatus.Queued      => "Na fila",
-            Music.DownloadStatus.Downloading => $"Baixando {DownloadProgress:F0}%",
-            Music.DownloadStatus.Completed   => "No PC",
-            Music.DownloadStatus.Failed      => "Falhou",
+            Music.DownloadStatus.Queued      => "Queued",
+            Music.DownloadStatus.Downloading => $"Downloading {DownloadProgress:F0}%",
+            Music.DownloadStatus.Completed   => "On PC",
+            Music.DownloadStatus.Failed      => "Failed",
             _                                => ""
         };
 
@@ -236,10 +237,10 @@ namespace Music
 
         public string DownloadStatusText => _downloadStatus switch
         {
-            Music.DownloadStatus.Queued      => "Na fila",
-            Music.DownloadStatus.Downloading => $"Baixando {DownloadProgress:F0}%",
-            Music.DownloadStatus.Completed   => "No PC",
-            Music.DownloadStatus.Failed      => "Falhou",
+            Music.DownloadStatus.Queued      => "Queued",
+            Music.DownloadStatus.Downloading => $"Downloading {DownloadProgress:F0}%",
+            Music.DownloadStatus.Completed   => "On PC",
+            Music.DownloadStatus.Failed      => "Failed",
             _                                => ""
         };
     }
@@ -261,6 +262,7 @@ namespace Music
         public bool SaveHistory                { get; set; } = true;
         public int  MaxHistoryItems            { get; set; } = 1000;
         public int  MaxConcurrentDownloads     { get; set; } = 2;
+        public string DownloadsFolder          { get; set; } = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyMusic), "MusicRecognizer");
     }
 }
 

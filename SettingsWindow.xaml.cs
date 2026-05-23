@@ -21,6 +21,7 @@ namespace Music
             VisualizerFpsTextBox.Text     = s.VisualizerFps.ToString();
             SaveHistoryCheckBox.IsChecked = s.SaveHistory;
             MaxHistoryTextBox.Text        = s.MaxHistoryItems.ToString();
+            DownloadDirTextBox.Text       = s.DownloadsFolder;
             DiscordRpcCheckBox.IsChecked  = s.EnableDiscordRichPresence;
 
             ConcurrentDownloadsSlider.Value = Math.Clamp(s.MaxConcurrentDownloads, 1, 10);
@@ -56,21 +57,23 @@ namespace Music
                 if (int.TryParse(MaxHistoryTextBox.Text, out int maxHistory))
                     settings.MaxHistoryItems = Math.Max(10, maxHistory);
 
+                settings.DownloadsFolder = DownloadDirTextBox.Text;
+
                 settings.EnableDiscordRichPresence = DiscordRpcCheckBox.IsChecked ?? true;
                 settings.MaxConcurrentDownloads    = Math.Clamp((int)ConcurrentDownloadsSlider.Value, 1, 10);
 
                 DataManager.Instance.SaveSettings(settings);
 
-                MessageBox.Show("Configurações salvas com sucesso!\n\nAlgumas alterações podem exigir reinicialização do aplicativo.", 
-                    "Configurações", MessageBoxButton.OK, MessageBoxImage.Information);
+                MessageBox.Show("Settings saved successfully!\n\nSome changes may require application restart.",
+                    "Settings", MessageBoxButton.OK, MessageBoxImage.Information);
 
                 DialogResult = true;
                 Close();
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Erro ao salvar configurações: {ex.Message}", 
-                    "Erro", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show($"Error saving settings: {ex.Message}",
+                    "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
@@ -83,15 +86,15 @@ namespace Music
         private void ClearHistoryButton_Click(object sender, RoutedEventArgs e)
         {
             var result = MessageBox.Show(
-                "Tem certeza que deseja limpar todo o histórico?\nEsta ação não pode ser desfeita.",
-                "Confirmar",
+                "Are you sure you want to clear all history?\nThis action cannot be undone.",
+                "Confirm",
                 MessageBoxButton.YesNo,
                 MessageBoxImage.Warning);
 
             if (result == MessageBoxResult.Yes)
             {
                 DataManager.Instance.ClearHistory();
-                MessageBox.Show("Histórico limpo com sucesso!", "Concluído", MessageBoxButton.OK, MessageBoxImage.Information);
+                MessageBox.Show("History cleared successfully!", "Completed", MessageBoxButton.OK, MessageBoxImage.Information);
             }
         }
     }

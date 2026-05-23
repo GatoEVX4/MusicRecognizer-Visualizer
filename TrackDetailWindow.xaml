@@ -5,7 +5,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="clr-namespace:Music"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    Title="Detalhes — Music Recognizer"
+    Title="Details — Music Recognizer"
     Width="920"
     Height="660"
     MinWidth="740"
@@ -155,13 +155,13 @@
                     <StackPanel Orientation="Horizontal" Margin="0,18,0,0">
                         <Button
                             x:Name="PlayBtn"
-                            Content="▶  Reproduzir"
+                            Content="▶  Play"
                             Click="PlayBtn_Click"
                             Style="{StaticResource PlayBtn}"
                             Margin="0,0,8,0" />
                         <Button
                             x:Name="OpenFolderBtn"
-                            Content="📁  Abrir pasta"
+                            Content="📁  Open Folder"
                             Click="OpenFolderBtn_Click"
                             Style="{StaticResource ActionBtn}"
                             Margin="0,0,8,0" />
@@ -188,7 +188,7 @@
                             Click="DeleteBtn_Click"
                             Margin="16,0,0,0"
                             Padding="12,9"
-                            ToolTip="Excluir música (registro + arquivo)">
+                            ToolTip="Delete music (record + file)">
                             <Button.Style>
                                 <Style TargetType="Button" BasedOn="{StaticResource ActionBtn}">
                                     <Setter Property="Foreground" Value="#EF4444" />
@@ -217,7 +217,7 @@
             <!-- Section header -->
             <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,14">
                 <Border Width="4" Height="20" Background="#6366F1" CornerRadius="2" Margin="0,0,10,0" />
-                <TextBlock Text="Músicas Parecidas" FontSize="16" FontWeight="Bold" VerticalAlignment="Center" />
+                <TextBlock Text="Similar Songs" FontSize="16" FontWeight="Bold" VerticalAlignment="Center" />
                 <TextBlock x:Name="RecCount" FontSize="13" Foreground="#6B7280" Margin="8,0,0,0" VerticalAlignment="Center" />
             </StackPanel>
 
@@ -287,7 +287,7 @@
             <TextBlock
                 x:Name="RecEmpty"
                 Grid.Row="1"
-                Text="Nenhuma recomendação disponível ainda. A música precisa ser reconhecida 3+ vezes."
+                Text="No recommendations available yet. The song needs to be recognized 3+ times."
                 FontSize="13"
                 Foreground="#6B7280"
                 VerticalAlignment="Center"

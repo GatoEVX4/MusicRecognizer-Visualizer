@@ -5,7 +5,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="clr-namespace:Music"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    Title="Histórico Completo — Music Recognizer"
+    Title="Complete History — Music Recognizer"
     Width="1060"
     Height="760"
     MinWidth="800"
@@ -21,7 +21,7 @@
             <Setter Property="Foreground" Value="#F9FAFB" />
         </Style>
 
-        <!-- Ghost button -->
+        <!--  Ghost button  -->
         <Style x:Key="GhostBtn" TargetType="Button">
             <Setter Property="Background" Value="Transparent" />
             <Setter Property="Foreground" Value="#9CA3AF" />
@@ -32,7 +32,10 @@
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="Button">
-                        <Border Background="{TemplateBinding Background}" CornerRadius="8" Padding="{TemplateBinding Padding}">
+                        <Border
+                            Padding="{TemplateBinding Padding}"
+                            Background="{TemplateBinding Background}"
+                            CornerRadius="8">
                             <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
                         </Border>
                     </ControlTemplate>
@@ -49,7 +52,7 @@
             </Style.Triggers>
         </Style>
 
-        <!-- Sort button (inactive) -->
+        <!--  Sort button (inactive)  -->
         <Style x:Key="SortBtn" TargetType="Button">
             <Setter Property="Background" Value="#1C1C1E" />
             <Setter Property="Foreground" Value="#9CA3AF" />
@@ -62,11 +65,11 @@
                 <Setter.Value>
                     <ControlTemplate TargetType="Button">
                         <Border
+                            Padding="{TemplateBinding Padding}"
                             Background="{TemplateBinding Background}"
                             BorderBrush="{TemplateBinding BorderBrush}"
                             BorderThickness="{TemplateBinding BorderThickness}"
-                            CornerRadius="8"
-                            Padding="{TemplateBinding Padding}">
+                            CornerRadius="8">
                             <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
                         </Border>
                     </ControlTemplate>
@@ -80,7 +83,7 @@
             </Style.Triggers>
         </Style>
 
-        <!-- Sort button (active/selected) -->
+        <!--  Sort button (active/selected)  -->
         <Style x:Key="SortBtnActive" TargetType="Button">
             <Setter Property="Background" Value="#312E81" />
             <Setter Property="Foreground" Value="#A5B4FC" />
@@ -93,11 +96,11 @@
                 <Setter.Value>
                     <ControlTemplate TargetType="Button">
                         <Border
+                            Padding="{TemplateBinding Padding}"
                             Background="{TemplateBinding Background}"
                             BorderBrush="{TemplateBinding BorderBrush}"
                             BorderThickness="{TemplateBinding BorderThickness}"
-                            CornerRadius="8"
-                            Padding="{TemplateBinding Padding}">
+                            CornerRadius="8">
                             <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
                         </Border>
                     </ControlTemplate>
@@ -110,7 +113,7 @@
             </Style.Triggers>
         </Style>
 
-        <!-- Page nav button -->
+        <!--  Page nav button  -->
         <Style x:Key="PageBtn" TargetType="Button">
             <Setter Property="Background" Value="#1C1C1E" />
             <Setter Property="Foreground" Value="#9CA3AF" />
@@ -123,11 +126,11 @@
                 <Setter.Value>
                     <ControlTemplate TargetType="Button">
                         <Border
+                            Padding="{TemplateBinding Padding}"
                             Background="{TemplateBinding Background}"
                             BorderBrush="{TemplateBinding BorderBrush}"
                             BorderThickness="{TemplateBinding BorderThickness}"
-                            CornerRadius="8"
-                            Padding="{TemplateBinding Padding}">
+                            CornerRadius="8">
                             <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
                         </Border>
                     </ControlTemplate>
@@ -144,11 +147,11 @@
             </Style.Triggers>
         </Style>
 
-        <!-- Compact history row -->
+        <!--  Compact history row  -->
         <DataTemplate x:Key="CompactRowTemplate">
             <Border
-                CornerRadius="10"
                 Margin="0,3"
+                CornerRadius="10"
                 Cursor="Hand"
                 MouseDown="MusicCard_MouseDown"
                 Tag="{Binding}">
@@ -170,16 +173,26 @@
                         <ColumnDefinition Width="Auto" />
                     </Grid.ColumnDefinitions>
 
-                    <!-- Cover + play overlay -->
-                    <Border Grid.Column="0" CornerRadius="8" ClipToBounds="True" Width="52" Height="52" Background="#2C2C2E">
+                    <!--  Cover + play overlay  -->
+                    <Border
+                        Grid.Column="0"
+                        Width="52"
+                        Height="52"
+                        Background="#2C2C2E"
+                        ClipToBounds="True"
+                        CornerRadius="8">
                         <Grid>
-                            <Image Source="{Binding CoverArtUrl, Converter={x:Static local:CoverArtConverter.Instance}}" Stretch="UniformToFill" RenderOptions.BitmapScalingMode="HighQuality" />
+                            <Image
+                                RenderOptions.BitmapScalingMode="HighQuality"
+                                Source="{Binding CoverArtUrl, Converter={x:Static local:CoverArtConverter.Instance}}"
+                                Stretch="UniformToFill" />
                             <Border
-                                Width="26" Height="26"
-                                CornerRadius="13"
-                                Background="White"
+                                Width="26"
+                                Height="26"
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Center"
+                                Background="White"
+                                CornerRadius="13"
                                 Cursor="Hand"
                                 MouseDown="PlayCard_MouseDown"
                                 Tag="{Binding}">
@@ -198,26 +211,45 @@
                                     </Style>
                                 </Border.Style>
                                 <TextBlock
-                                    Text="▶"
-                                    FontSize="9"
-                                    Foreground="#111111"
+                                    Margin="2,0,0,0"
                                     HorizontalAlignment="Center"
                                     VerticalAlignment="Center"
-                                    Margin="2,0,0,0" />
+                                    FontSize="9"
+                                    Foreground="#111111"
+                                    Text="▶" />
                             </Border>
                         </Grid>
                     </Border>
 
-                    <!-- Title + artist -->
-                    <StackPanel Grid.Column="1" Margin="14,0,10,0" VerticalAlignment="Center">
-                        <TextBlock Text="{Binding Title}" FontSize="14" FontWeight="SemiBold" TextTrimming="CharacterEllipsis" />
-                        <TextBlock Text="{Binding Artist}" FontSize="12" Foreground="#9CA3AF" Margin="0,3,0,0" TextTrimming="CharacterEllipsis" />
+                    <!--  Title + artist  -->
+                    <StackPanel
+                        Grid.Column="1"
+                        Margin="14,0,10,0"
+                        VerticalAlignment="Center">
+                        <TextBlock
+                            FontSize="14"
+                            FontWeight="SemiBold"
+                            Text="{Binding Title}"
+                            TextTrimming="CharacterEllipsis" />
+                        <TextBlock
+                            Margin="0,3,0,0"
+                            FontSize="12"
+                            Foreground="#9CA3AF"
+                            Text="{Binding Artist}"
+                            TextTrimming="CharacterEllipsis" />
                     </StackPanel>
 
-                    <!-- Meta badges -->
-                    <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center">
-                        <!-- Downloaded -->
-                        <Border CornerRadius="5" Padding="8,4" Margin="0,0,6,0" Background="#14532D">
+                    <!--  Meta badges  -->
+                    <StackPanel
+                        Grid.Column="2"
+                        VerticalAlignment="Center"
+                        Orientation="Horizontal">
+                        <!--  Downloaded  -->
+                        <Border
+                            Margin="0,0,6,0"
+                            Padding="8,4"
+                            Background="#14532D"
+                            CornerRadius="5">
                             <Border.Style>
                                 <Style TargetType="Border">
                                     <Setter Property="Visibility" Value="Collapsed" />
@@ -228,11 +260,19 @@
                                     </Style.Triggers>
                                 </Style>
                             </Border.Style>
-                            <TextBlock Text="✓ No PC" FontSize="10" Foreground="#86EFAC" FontWeight="SemiBold" />
+                            <TextBlock
+                                FontSize="10"
+                                FontWeight="SemiBold"
+                                Foreground="#86EFAC"
+                                Text="Downloaded" />
                         </Border>
 
-                        <!-- Downloading -->
-                        <Border CornerRadius="5" Padding="8,4" Margin="0,0,6,0" Background="#78350F">
+                        <!--  Downloading  -->
+                        <Border
+                            Margin="0,0,6,0"
+                            Padding="8,4"
+                            Background="#78350F"
+                            CornerRadius="5">
                             <Border.Style>
                                 <Style TargetType="Border">
                                     <Setter Property="Visibility" Value="Collapsed" />
@@ -243,11 +283,18 @@
                                     </Style.Triggers>
                                 </Style>
                             </Border.Style>
-                            <TextBlock Text="{Binding DownloadStatusText}" FontSize="10" Foreground="#FDE68A" />
+                            <TextBlock
+                                FontSize="10"
+                                Foreground="#FDE68A"
+                                Text="{Binding DownloadStatusText}" />
                         </Border>
 
-                        <!-- Queued -->
-                        <Border CornerRadius="5" Padding="8,4" Margin="0,0,6,0" Background="#1E3A5F">
+                        <!--  Queued  -->
+                        <Border
+                            Margin="0,0,6,0"
+                            Padding="8,4"
+                            Background="#1E3A5F"
+                            CornerRadius="5">
                             <Border.Style>
                                 <Style TargetType="Border">
                                     <Setter Property="Visibility" Value="Collapsed" />
@@ -258,21 +305,31 @@
                                     </Style.Triggers>
                                 </Style>
                             </Border.Style>
-                            <TextBlock Text="Na fila" FontSize="10" Foreground="#93C5FD" />
+                            <TextBlock
+                                FontSize="10"
+                                Foreground="#93C5FD"
+                                Text="Queued" />
                         </Border>
 
-                        <!-- Count -->
-                        <Border Background="#1F2937" CornerRadius="5" Padding="8,4" Margin="0,0,10,0">
-                            <TextBlock Text="{Binding RecognitionCount, StringFormat='{}{0}×'}" FontSize="11" Foreground="#9CA3AF" />
+                        <!--  Count  -->
+                        <Border
+                            Margin="0,0,10,0"
+                            Padding="8,4"
+                            Background="#1F2937"
+                            CornerRadius="5">
+                            <TextBlock
+                                FontSize="11"
+                                Foreground="#9CA3AF"
+                                Text="{Binding RecognitionCount, StringFormat='{}{0}×'}" />
                         </Border>
 
-                        <!-- Date -->
+                        <!--  Date  -->
                         <TextBlock
-                            Text="{Binding LastRecognizedAt, StringFormat='dd/MM  HH:mm'}"
+                            Width="90"
+                            VerticalAlignment="Center"
                             FontSize="11"
                             Foreground="#6B7280"
-                            VerticalAlignment="Center"
-                            Width="90" />
+                            Text="{Binding LastRecognizedAt, StringFormat='dd/MM  HH:mm'}" />
                     </StackPanel>
                 </Grid>
             </Border>
@@ -287,101 +344,133 @@
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
-        <!-- ══ Header ══ -->
+        <!--  ══ Header ══  -->
         <Border
             Grid.Row="0"
+            Padding="24,16"
             Background="#161618"
             BorderBrush="#2C2C2E"
-            BorderThickness="0,0,0,1"
-            Padding="24,16">
+            BorderThickness="0,0,0,1">
             <Grid>
                 <StackPanel VerticalAlignment="Center">
-                    <TextBlock Text="Histórico Completo" FontSize="22" FontWeight="Bold" />
-                    <TextBlock x:Name="SubtitleText" FontSize="12" Foreground="#6B7280" Margin="0,3,0,0" />
+                    <TextBlock
+                        FontSize="22"
+                        FontWeight="Bold"
+                        Text="Complete History" />
+                    <TextBlock
+                        x:Name="SubtitleText"
+                        Margin="0,3,0,0"
+                        FontSize="12"
+                        Foreground="#6B7280" />
                 </StackPanel>
             </Grid>
         </Border>
 
-        <!-- ══ Sort bar ══ -->
+        <!--  ══ Sort bar ══  -->
         <Border
             Grid.Row="1"
+            Padding="24,12"
             Background="#161618"
             BorderBrush="#2C2C2E"
-            BorderThickness="0,0,0,1"
-            Padding="24,12">
-            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+            BorderThickness="0,0,0,1">
+            <StackPanel VerticalAlignment="Center" Orientation="Horizontal">
                 <TextBlock
-                    Text="Ordenar por:"
+                    Margin="0,0,14,0"
+                    VerticalAlignment="Center"
                     FontSize="13"
                     Foreground="#6B7280"
-                    VerticalAlignment="Center"
-                    Margin="0,0,14,0" />
+                    Text="Sort by:" />
 
-                <!-- Date buttons -->
-                <Button x:Name="SortDateDescBtn"
-                        Content="Data ↓"
-                        Style="{StaticResource SortBtnActive}"
-                        Click="SortDateDesc_Click"
-                        Margin="0,0,6,0" />
-                <Button x:Name="SortDateAscBtn"
-                        Content="Data ↑"
-                        Style="{StaticResource SortBtn}"
-                        Click="SortDateAsc_Click"
-                        Margin="0,0,18,0" />
+                <!--  Date buttons  -->
+                <Button
+                    x:Name="SortDateDescBtn"
+                    Margin="0,0,6,0"
+                    Click="SortDateDesc_Click"
+                    Content="Date ↓"
+                    Style="{StaticResource SortBtnActive}" />
+                <Button
+                    x:Name="SortDateAscBtn"
+                    Margin="0,0,18,0"
+                    Click="SortDateAsc_Click"
+                    Content="Date ↑"
+                    Style="{StaticResource SortBtn}" />
 
-                <!-- Recognition count buttons -->
-                <Button x:Name="SortCountDescBtn"
-                        Content="Reconhecimentos ↓"
-                        Style="{StaticResource SortBtn}"
-                        Click="SortCountDesc_Click"
-                        Margin="0,0,6,0" />
-                <Button x:Name="SortCountAscBtn"
-                        Content="Reconhecimentos ↑"
-                        Style="{StaticResource SortBtn}"
-                        Click="SortCountAsc_Click"
-                        Margin="0,0,18,0" />
+                <!--  Recognition count buttons  -->
+                <Button
+                    x:Name="SortCountDescBtn"
+                    Margin="0,0,6,0"
+                    Click="SortCountDesc_Click"
+                    Content="Recognitions ↓"
+                    Style="{StaticResource SortBtn}" />
+                <Button
+                    x:Name="SortCountAscBtn"
+                    Margin="0,0,18,0"
+                    Click="SortCountAsc_Click"
+                    Content="Recognitions ↑"
+                    Style="{StaticResource SortBtn}" />
 
-                <!-- Alphabetical buttons -->
-                <Button x:Name="SortNameAscBtn"
-                        Content="A → Z"
-                        Style="{StaticResource SortBtn}"
-                        Click="SortNameAsc_Click"
-                        Margin="0,0,6,0" />
-                <Button x:Name="SortNameDescBtn"
-                        Content="Z → A"
-                        Style="{StaticResource SortBtn}"
-                        Click="SortNameDesc_Click" />
+                <!--  Alphabetical buttons  -->
+                <Button
+                    x:Name="SortNameAscBtn"
+                    Margin="0,0,6,0"
+                    Click="SortNameAsc_Click"
+                    Content="A → Z"
+                    Style="{StaticResource SortBtn}" />
+                <Button
+                    x:Name="SortNameDescBtn"
+                    Click="SortNameDesc_Click"
+                    Content="Z → A"
+                    Style="{StaticResource SortBtn}" />
             </StackPanel>
         </Border>
 
-        <!-- ══ List ══ -->
-        <ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+        <!--  ══ List ══  -->
+        <ScrollViewer
+            Grid.Row="2"
+            HorizontalScrollBarVisibility="Disabled"
+            VerticalScrollBarVisibility="Auto">
             <StackPanel Margin="24,16,24,8">
                 <ItemsControl x:Name="HistoryList" ItemTemplate="{StaticResource CompactRowTemplate}" />
 
                 <TextBlock
                     x:Name="EmptyText"
-                    Text="Nenhuma música reconhecida ainda."
+                    Margin="0,40,0,0"
+                    HorizontalAlignment="Center"
                     FontSize="14"
                     Foreground="#6B7280"
-                    HorizontalAlignment="Center"
-                    Margin="0,40,0,0"
+                    Text="No music recognized yet."
                     Visibility="Collapsed" />
             </StackPanel>
         </ScrollViewer>
 
-        <!-- ══ Pagination ══ -->
-        <Border Grid.Row="3" Background="#161618" BorderBrush="#2C2C2E" BorderThickness="0,1,0,0" Padding="24,12">
+        <!--  ══ Pagination ══  -->
+        <Border
+            Grid.Row="3"
+            Padding="24,12"
+            Background="#161618"
+            BorderBrush="#2C2C2E"
+            BorderThickness="0,1,0,0">
             <Grid>
-                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
-                    <Button x:Name="PrevPageBtn" Content="← Anterior" Click="PrevPage_Click" Style="{StaticResource PageBtn}" />
+                <StackPanel
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    Orientation="Horizontal">
+                    <Button
+                        x:Name="PrevPageBtn"
+                        Click="PrevPage_Click"
+                        Content="← Previous"
+                        Style="{StaticResource PageBtn}" />
                     <TextBlock
                         x:Name="PageInfoText"
-                        VerticalAlignment="Center"
                         Margin="18,0"
+                        VerticalAlignment="Center"
                         FontSize="13"
                         Foreground="#9CA3AF" />
-                    <Button x:Name="NextPageBtn" Content="Próxima →" Click="NextPage_Click" Style="{StaticResource PageBtn}" />
+                    <Button
+                        x:Name="NextPageBtn"
+                        Click="NextPage_Click"
+                        Content="Next →"
+                        Style="{StaticResource PageBtn}" />
                 </StackPanel>
             </Grid>
         </Border>

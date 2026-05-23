@@ -26,9 +26,6 @@ namespace Music
         /// <summary>Fired only when items are added/removed. Progress updates via INotifyPropertyChanged.</summary>
         public event EventHandler? DownloadsListChanged;
 
-        public static string GetOutputDir() =>
-            Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyMusic), "MusicRecognizer");
-
         public static string GenerateFileName(string artist, string title)
         {
             var raw     = $"{artist} - {title}";
@@ -49,7 +46,7 @@ namespace Music
             // Pick up the persisted concurrency setting before starting any downloads.
             MaxConcurrentDownloads = _db.GetSettings().MaxConcurrentDownloads;
 
-            var outputDir = GetOutputDir();
+            var outputDir = _db.GetSettings().DownloadsFolder;
             Directory.CreateDirectory(outputDir);
 
             // --- Load existing download records ---
@@ -179,7 +176,7 @@ namespace Music
 
         public void Enqueue(RecognizedTrack track)
         {
-            var filePath = Path.Combine(GetOutputDir(), GenerateFileName(track.Artist, track.Title) + ".mp3");
+            var filePath = Path.Combine(_db.GetSettings().DownloadsFolder, GenerateFileName(track.Artist, track.Title) + ".mp3");
 
             DownloadedTrack? download = null;
             lock (_lock)
@@ -318,8 +315,8 @@ namespace Music
                 {
                     track.Status       = DownloadStatus.Failed;
                     track.ErrorMessage = process.ExitCode != 0
-                        ? $"yt-dlp saiu com código {process.ExitCode}"
-                        : "Arquivo não encontrado após download";
+                        ? $"yt-dlp exited with code {process.ExitCode}"
+                        : "File not found after download";
                     Logger.Log($"[Download] Failed: {track.Artist} - {track.Title}", ConsoleColor.Red);
                 }
             }

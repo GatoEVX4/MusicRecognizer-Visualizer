@@ -152,8 +152,8 @@ namespace Music
         {
             var n = _allHistory.Count;
             SubtitleText.Text = n > 0
-                ? $"{n} música{(n != 1 ? "s" : "")} na sua coleção"
-                : "Nenhuma música reconhecida ainda";
+                ? $"{n} song{(n != 1 ? "s" : "")} in your collection"
+                : "No music recognized yet";
         }
 
         // ── Download queue ────────────────────────────────────────────────────
@@ -253,7 +253,7 @@ namespace Music
                 SearchResultsList.Visibility = Visibility.Collapsed;
             }
 
-            SearchPageInfo.Text     = $"Página {_searchPage + 1} de {totalPages}";
+            SearchPageInfo.Text     = $"Page {_searchPage + 1} of {totalPages}";
             SearchPrevBtn.IsEnabled = _searchPage > 0;
             SearchNextBtn.IsEnabled = (_searchPage + 1) < totalPages;
             SearchPaginationPanel.Visibility = totalPages > 1 ? Visibility.Visible : Visibility.Collapsed;
@@ -330,7 +330,7 @@ namespace Music
 
             menu.Items.Add(new Separator());
 
-            var del = new MenuItem { Header = "🗑  Excluir música" };
+            var del = new MenuItem { Header = "🗑  Delete music" };
             del.Click += (_, _) => ConfirmAndDelete(item);
             menu.Items.Add(del);
 
@@ -340,10 +340,10 @@ namespace Music
         private void ConfirmAndDelete(MusicItem item)
         {
             var msg = item.HasFile
-                ? $"Excluir \"{item.Title}\"?\n\nO registro do histórico e o arquivo de áudio serão removidos permanentemente."
-                : $"Excluir \"{item.Title}\" do histórico?";
+                ? $"Delete \"{item.Title}\"?\n\nThe history record and audio file will be permanently removed."
+                : $"Delete \"{item.Title}\" from history?";
 
-            if (MessageBox.Show(msg, "Confirmar exclusão", MessageBoxButton.YesNo, MessageBoxImage.Warning)
+            if (MessageBox.Show(msg, "Confirm deletion", MessageBoxButton.YesNo, MessageBoxImage.Warning)
                 == MessageBoxResult.Yes)
                 DataManager.Instance.DeleteMusicItem(item.Id);
         }
