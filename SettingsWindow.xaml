@@ -6,6 +6,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     Title="Settings - Music Recognizer"
     Width="500"
+    MaxHeight="800"
     Background="#1E1E1E"
     ResizeMode="NoResize"
     WindowStartupLocation="CenterScreen"

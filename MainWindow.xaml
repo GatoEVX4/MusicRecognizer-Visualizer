@@ -20,8 +20,8 @@
     mc:Ignorable="d">
     <Window.ContextMenu>
         <ContextMenu>
-            <MenuItem Click="HistoryMenuItem_Click" Header="History (Ctrl+H)" />
-            <MenuItem Click="SettingsMenuItem_Click" Header="Settings (Ctrl+S)" />
+            <MenuItem Click="HistoryMenuItem_Click" Header="History" />
+            <MenuItem Click="SettingsMenuItem_Click" Header="Settings" />
             <Separator />
             <MenuItem Click="ExitMenuItem_Click" Header="Exit" />
         </ContextMenu>
