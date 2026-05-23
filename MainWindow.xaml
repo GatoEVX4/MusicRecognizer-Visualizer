@@ -14,6 +14,7 @@
     MouseRightButtonDown="Window_MouseRightButtonDown"
     ResizeMode="NoResize"
     ShowInTaskbar="False"
+    Topmost="True"
     WindowStartupLocation="CenterScreen"
     WindowStyle="None"
     mc:Ignorable="d">
