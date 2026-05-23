@@ -512,17 +512,11 @@ namespace Music
                     case "VisualizerBars":
                         settings.VisualizerBars = int.Parse(value);
                         break;
-                    case "VisualizerFps":
-                        settings.VisualizerFps = int.Parse(value);
-                        break;
                     case "EnableDiscordRichPresence":
                         settings.EnableDiscordRichPresence = bool.Parse(value);
                         break;
                     case "SaveHistory":
                         settings.SaveHistory = bool.Parse(value);
-                        break;
-                    case "MaxHistoryItems":
-                        settings.MaxHistoryItems = int.Parse(value);
                         break;
                     case "MaxConcurrentDownloads":
                         settings.MaxConcurrentDownloads = int.Parse(value);
@@ -558,10 +552,8 @@ namespace Music
                 SaveSetting("RecognitionDelayMin", settings.RecognitionDelayMin.ToString());
                 SaveSetting("RecognitionDelayMax", settings.RecognitionDelayMax.ToString());
                 SaveSetting("VisualizerBars", settings.VisualizerBars.ToString());
-                SaveSetting("VisualizerFps", settings.VisualizerFps.ToString());
                 SaveSetting("EnableDiscordRichPresence", settings.EnableDiscordRichPresence.ToString());
                 SaveSetting("SaveHistory", settings.SaveHistory.ToString());
-                SaveSetting("MaxHistoryItems",         settings.MaxHistoryItems.ToString());
                 SaveSetting("MaxConcurrentDownloads", settings.MaxConcurrentDownloads.ToString());
 
                 transaction.Commit();

@@ -18,9 +18,7 @@ namespace Music
             DelayMinTextBox.Text          = s.RecognitionDelayMin.ToString();
             DelayMaxTextBox.Text          = s.RecognitionDelayMax.ToString();
             VisualizerBarsTextBox.Text    = s.VisualizerBars.ToString();
-            VisualizerFpsTextBox.Text     = s.VisualizerFps.ToString();
             SaveHistoryCheckBox.IsChecked = s.SaveHistory;
-            MaxHistoryTextBox.Text        = s.MaxHistoryItems.ToString();
             DownloadDirTextBox.Text       = s.DownloadsFolder;
             DiscordRpcCheckBox.IsChecked  = s.EnableDiscordRichPresence;
 
@@ -49,13 +47,7 @@ namespace Music
                 if (int.TryParse(VisualizerBarsTextBox.Text, out int bars))
                     settings.VisualizerBars = Math.Clamp(bars, 8, 128);
 
-                if (int.TryParse(VisualizerFpsTextBox.Text, out int fps))
-                    settings.VisualizerFps = Math.Clamp(fps, 15, 120);
-
                 settings.SaveHistory = SaveHistoryCheckBox.IsChecked ?? true;
-
-                if (int.TryParse(MaxHistoryTextBox.Text, out int maxHistory))
-                    settings.MaxHistoryItems = Math.Max(10, maxHistory);
 
                 settings.DownloadsFolder = DownloadDirTextBox.Text;
 

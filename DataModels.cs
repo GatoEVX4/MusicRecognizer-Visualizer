@@ -257,10 +257,8 @@ namespace Music
         public int  RecognitionDelayMin        { get; set; } = 2200;
         public int  RecognitionDelayMax        { get; set; } = 5500;
         public int  VisualizerBars             { get; set; } = 32;
-        public int  VisualizerFps              { get; set; } = 60;
         public bool EnableDiscordRichPresence  { get; set; } = true;
         public bool SaveHistory                { get; set; } = true;
-        public int  MaxHistoryItems            { get; set; } = 1000;
         public int  MaxConcurrentDownloads     { get; set; } = 5;
         public string DownloadsFolder          { get; set; } = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyMusic), "MusicRecognizer");
     }

@@ -51,15 +51,9 @@
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
-        <TextBlock
-            Grid.Row="0"
-            FontSize="20"
-            FontWeight="Bold"
-            Text="Settings" />
-
         <ScrollViewer
             Grid.Row="1"
-            Margin="0,20,0,20"
+            Margin="0,0,0,20"
             VerticalScrollBarVisibility="Auto">
             <StackPanel>
                 <!--  Recognition  -->
@@ -69,11 +63,25 @@
                     Text="Recognition" />
                 <Separator Margin="0,5,0,10" Background="#3F3F46" />
 
-                <TextBlock Margin="0,5,0,5" Text="Minimum delay between recognitions (ms):" />
-                <TextBox x:Name="DelayMinTextBox" Text="2200" />
+                <Grid>
+                    <TextBlock Margin="0,5,0,0" Text="Minimum delay between recognitions (ms):" />
+                    <TextBox
+                        x:Name="DelayMinTextBox"
+                        Width="100"
+                        HorizontalAlignment="Right"
+                        Text="2200" />
+                </Grid>
 
-                <TextBlock Margin="0,10,0,5" Text="Maximum delay between recognitions (ms):" />
-                <TextBox x:Name="DelayMaxTextBox" Text="5500" />
+
+                <Grid Margin="0,5,0,0">
+                    <TextBlock Margin="0,10,0,5" Text="Maximum delay between recognitions (ms):" />
+                    <TextBox
+                        x:Name="DelayMaxTextBox"
+                        Width="100"
+                        HorizontalAlignment="Right"
+                        Text="5500" />
+                </Grid>
+
 
                 <!--  Visualizer  -->
                 <TextBlock
@@ -83,11 +91,15 @@
                     Text="Visualizer" />
                 <Separator Margin="0,5,0,10" Background="#3F3F46" />
 
-                <TextBlock Margin="0,5,0,5" Text="Number of bars:" />
-                <TextBox x:Name="VisualizerBarsTextBox" Text="32" />
+                <Grid>
+                    <TextBlock Margin="0,5,0,5" Text="Number of bars:" />
+                    <TextBox
+                        x:Name="VisualizerBarsTextBox"
+                        Width="100"
+                        HorizontalAlignment="Right"
+                        Text="32" />
+                </Grid>
 
-                <TextBlock Margin="0,10,0,5" Text="Visualizer FPS:" />
-                <TextBox x:Name="VisualizerFpsTextBox" Text="60" />
 
                 <!--  History  -->
                 <TextBlock
@@ -99,11 +111,8 @@
 
                 <CheckBox
                     x:Name="SaveHistoryCheckBox"
-                    Content="Save recognized music history"
+                    Content="Use History"
                     IsChecked="True" />
-
-                <TextBlock Margin="0,10,0,5" Text="Maximum history items:" />
-                <TextBox x:Name="MaxHistoryTextBox" Text="1000" />
 
                 <!--  Downloads  -->
                 <TextBlock
@@ -161,22 +170,6 @@
                     x:Name="DiscordRpcCheckBox"
                     Content="Enable Discord Rich Presence"
                     IsChecked="True" />
-
-                <!--  Data  -->
-                <TextBlock
-                    Margin="0,20,0,0"
-                    FontSize="16"
-                    FontWeight="SemiBold"
-                    Text="Data" />
-                <Separator Margin="0,5,0,10" Background="#3F3F46" />
-
-                <Button
-                    x:Name="ClearHistoryButton"
-                    Margin="0,5,0,0"
-                    HorizontalAlignment="Left"
-                    Background="#D13438"
-                    Click="ClearHistoryButton_Click"
-                    Content="Clear History" />
             </StackPanel>
         </ScrollViewer>
 
@@ -185,8 +178,13 @@
             HorizontalAlignment="Right"
             Orientation="Horizontal">
             <Button
+                x:Name="ClearHistoryButton"
+                Background="#D13438"
+                Click="ClearHistoryButton_Click"
+                Content="Clear History" />
+            <Button
                 x:Name="CancelButton"
-                Margin="0,0,10,0"
+                Margin="10,0,10,0"
                 Background="#3F3F46"
                 Click="CancelButton_Click"
                 Content="Cancel" />
