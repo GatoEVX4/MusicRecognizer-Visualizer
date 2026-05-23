@@ -261,7 +261,7 @@ namespace Music
         public bool EnableDiscordRichPresence  { get; set; } = true;
         public bool SaveHistory                { get; set; } = true;
         public int  MaxHistoryItems            { get; set; } = 1000;
-        public int  MaxConcurrentDownloads     { get; set; } = 2;
+        public int  MaxConcurrentDownloads     { get; set; } = 5;
         public string DownloadsFolder          { get; set; } = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyMusic), "MusicRecognizer");
     }
 }
