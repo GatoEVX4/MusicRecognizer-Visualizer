@@ -63,23 +63,31 @@
                     Text="Recognition" />
                 <Separator Margin="0,5,0,10" Background="#3F3F46" />
 
-                <Grid>
-                    <TextBlock Margin="0,5,0,0" Text="Minimum delay between recognitions (ms):" />
+                <Grid Margin="0,0,0,5">
+                    <TextBlock
+                        VerticalAlignment="Center"
+                        Foreground="#FFC8C8C8"
+                        Text="Minimum delay between recognitions (ms):" />
                     <TextBox
                         x:Name="DelayMinTextBox"
                         Width="100"
                         HorizontalAlignment="Right"
-                        Text="2200" />
+                        Text="2200"
+                        TextAlignment="Right" />
                 </Grid>
 
 
-                <Grid Margin="0,5,0,0">
-                    <TextBlock Margin="0,10,0,5" Text="Maximum delay between recognitions (ms):" />
+                <Grid>
+                    <TextBlock
+                        VerticalAlignment="Center"
+                        Foreground="#FFC8C8C8"
+                        Text="Maximum delay between recognitions (ms):" />
                     <TextBox
                         x:Name="DelayMaxTextBox"
                         Width="100"
                         HorizontalAlignment="Right"
-                        Text="5500" />
+                        Text="5500"
+                        TextAlignment="Right" />
                 </Grid>
 
 
@@ -92,12 +100,16 @@
                 <Separator Margin="0,5,0,10" Background="#3F3F46" />
 
                 <Grid>
-                    <TextBlock Margin="0,5,0,5" Text="Number of bars:" />
+                    <TextBlock
+                        VerticalAlignment="Center"
+                        Foreground="#FFC8C8C8"
+                        Text="Number of bars:" />
                     <TextBox
                         x:Name="VisualizerBarsTextBox"
                         Width="100"
                         HorizontalAlignment="Right"
-                        Text="32" />
+                        Text="32"
+                        TextAlignment="Right" />
                 </Grid>
 
 
@@ -109,10 +121,19 @@
                     Text="History" />
                 <Separator Margin="0,5,0,10" Background="#3F3F46" />
 
-                <CheckBox
-                    x:Name="SaveHistoryCheckBox"
-                    Content="Use History"
-                    IsChecked="True" />
+                <Grid>
+                    <TextBlock
+                        VerticalAlignment="Center"
+                        Foreground="#FFC8C8C8"
+                        Text="Enable History" />
+
+                    <CheckBox
+                        x:Name="SaveHistoryCheckBox"
+                        HorizontalAlignment="Right"
+                        IsChecked="True" />
+                </Grid>
+
+
 
                 <!--  Downloads  -->
                 <TextBlock
@@ -122,41 +143,27 @@
                     Text="Downloads" />
                 <Separator Margin="0,5,0,10" Background="#3F3F46" />
 
-                <TextBlock Margin="0,10,0,5" Text="Download directory:" />
-                <TextBox x:Name="DownloadDirTextBox" />
-
-                <TextBlock Margin="0,5,0,8" Text="Simultaneous downloads (yt-dlp instances):" />
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*" />
-                        <ColumnDefinition Width="40" />
-                    </Grid.ColumnDefinitions>
-                    <Slider
-                        x:Name="ConcurrentDownloadsSlider"
-                        Grid.Column="0"
-                        VerticalAlignment="Center"
-                        IsSnapToTickEnabled="True"
-                        LargeChange="1"
-                        Maximum="10"
-                        Minimum="1"
-                        SmallChange="1"
-                        TickFrequency="1"
-                        ValueChanged="ConcurrentDownloadsSlider_ValueChanged"
-                        Value="2" />
-                    <TextBlock
-                        x:Name="ConcurrentDownloadsLabel"
-                        Grid.Column="1"
-                        HorizontalAlignment="Center"
-                        VerticalAlignment="Center"
-                        FontSize="15"
-                        FontWeight="SemiBold"
-                        Text="2" />
+                <Grid Margin="0,0,0,5">
+                    <TextBlock VerticalAlignment="Center" Text="Directory:" />
+                    <TextBox
+                        x:Name="DownloadDirTextBox"
+                        Width="380"
+                        HorizontalAlignment="Right"
+                        TextAlignment="Right" />
                 </Grid>
-                <TextBlock
-                    Margin="0,5,0,0"
-                    FontSize="11"
-                    Foreground="#999999"
-                    Text="Each instance opens a separate yt-dlp process. High values may saturate your network." />
+
+                <Grid>
+                    <TextBlock
+                        VerticalAlignment="Center"
+                        Foreground="#FFC8C8C8"
+                        Text="Simultaneous downloads (yt-dlp instances):" />
+                    <TextBox
+                        x:Name="ConcurrentDownloadsSlider"
+                        Width="100"
+                        HorizontalAlignment="Right"
+                        Text="5"
+                        TextAlignment="Right" />
+                </Grid>
 
                 <!--  Integrations  -->
                 <TextBlock
@@ -166,10 +173,17 @@
                     Text="Integrations" />
                 <Separator Margin="0,5,0,10" Background="#3F3F46" />
 
-                <CheckBox
-                    x:Name="DiscordRpcCheckBox"
-                    Content="Enable Discord Rich Presence"
-                    IsChecked="True" />
+                <Grid>
+                    <TextBlock
+                        VerticalAlignment="Center"
+                        Foreground="#FFC8C8C8"
+                        Text="Discord Rich Presence" />
+
+                    <CheckBox
+                        x:Name="DiscordRpcCheckBox"
+                        HorizontalAlignment="Right"
+                        IsChecked="True" />
+                </Grid>
             </StackPanel>
         </ScrollViewer>
 
