@@ -158,7 +158,7 @@
                         Foreground="#FFC8C8C8"
                         Text="Simultaneous downloads (yt-dlp instances):" />
                     <TextBox
-                        x:Name="ConcurrentDownloadsSlider"
+                        x:Name="ConcurrentDownloadsTextBox"
                         Width="100"
                         HorizontalAlignment="Right"
                         Text="5"

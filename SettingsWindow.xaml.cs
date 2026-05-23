@@ -14,22 +14,13 @@ namespace Music
         private void LoadSettings()
         {
             var s = DataManager.Instance.Settings;
-
-            DelayMinTextBox.Text          = s.RecognitionDelayMin.ToString();
-            DelayMaxTextBox.Text          = s.RecognitionDelayMax.ToString();
-            VisualizerBarsTextBox.Text    = s.VisualizerBars.ToString();
-            SaveHistoryCheckBox.IsChecked = s.SaveHistory;
-            DownloadDirTextBox.Text       = s.DownloadsFolder;
-            DiscordRpcCheckBox.IsChecked  = s.EnableDiscordRichPresence;
-
-            ConcurrentDownloadsSlider.Value = Math.Clamp(s.MaxConcurrentDownloads, 1, 10);
-        }
-
-        private void ConcurrentDownloadsSlider_ValueChanged(object sender,
-            System.Windows.RoutedPropertyChangedEventArgs<double> e)
-        {
-            if (ConcurrentDownloadsLabel != null)
-                ConcurrentDownloadsLabel.Text = ((int)ConcurrentDownloadsSlider.Value).ToString();
+            DelayMinTextBox.Text            = s.RecognitionDelayMin.ToString();
+            DelayMaxTextBox.Text            = s.RecognitionDelayMax.ToString();
+            VisualizerBarsTextBox.Text      = s.VisualizerBars.ToString();
+            SaveHistoryCheckBox.IsChecked   = s.SaveHistory;
+            DownloadDirTextBox.Text         = s.DownloadsFolder;
+            DiscordRpcCheckBox.IsChecked    = s.EnableDiscordRichPresence;
+            ConcurrentDownloadsTextBox.Text = s.MaxConcurrentDownloads.ToString();
         }
 
         private void SaveButton_Click(object sender, RoutedEventArgs e)
@@ -52,7 +43,9 @@ namespace Music
                 settings.DownloadsFolder = DownloadDirTextBox.Text;
 
                 settings.EnableDiscordRichPresence = DiscordRpcCheckBox.IsChecked ?? true;
-                settings.MaxConcurrentDownloads    = Math.Clamp((int)ConcurrentDownloadsSlider.Value, 1, 10);
+
+                if (int.TryParse(ConcurrentDownloadsTextBox.Text, out int concurrentDownloads))
+                    settings.MaxConcurrentDownloads = Math.Clamp(concurrentDownloads, 1, 10);
 
                 DataManager.Instance.SaveSettings(settings);
 
